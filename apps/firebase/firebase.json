@@ -1,0 +1,25 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "runtime": "nodejs20",
+      "codebase": "functions",
+      "source": "./isolate",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "tests",
+        ".env",
+        ".firebaserc",
+        "firestore.rules",
+        "vite.config.ts",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ],
+      "predeploy": ["pnpm run build", "pnpm run isolate"]
+    }
+  ]
+}

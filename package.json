@@ -1,0 +1,24 @@
+{
+  "repository": "https://github.com/vercel/examples.git",
+  "name": "subsonic-wxt",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "build:main": "turbo run build --filter=main...",
+    "build:docs": "turbo run build --filter=docs...",
+    "dev": "turbo run dev",
+    "dev:main": "turbo run dev --filter=extension --filter=ui",
+    "dev:ui": "turbo run dev --filter=ui --filter=storybook",
+    "start": "turbo run start",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "turbo": "^2.3.3"
+  },
+  "packageManager": "pnpm@9.14.4",
+  "dependencies": {
+    "@thedutchcoder/postcss-rem-to-px": "^0.0.2"
+  }
+}

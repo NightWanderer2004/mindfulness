@@ -1,0 +1,48 @@
+{
+  "name": "storybook",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "storybook dev -p 6006 --no-open",
+    "build": "storybook build --docs",
+    "preview-storybook": "serve storybook-static",
+    "clean": "rm -rf .turbo && rm -rf node_modules"
+  },
+  "dependencies": {
+    "@mui/icons-material": "catalog:",
+    "@mui/lab": "catalog:",
+    "@mui/material": "catalog:",
+    "@repo/db": "workspace:*",
+    "@repo/tailwind-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "react": "catalog:react18",
+    "react-dom": "catalog:react18",
+    "vite-tsconfig-paths": "^5.0.1"
+  },
+  "devDependencies": {
+    "@emotion/cache": "catalog:",
+    "@emotion/react": "catalog:",
+    "@storybook/addon-actions": "^8.4.6",
+    "@storybook/addon-docs": "^8.4.6",
+    "@storybook/addon-essentials": "^8.4.6",
+    "@storybook/addon-links": "^8.4.6",
+    "@storybook/addon-themes": "^8.4.6",
+    "@storybook/builder-vite": "8.2.10",
+    "@storybook/manager-api": "^8.4.6",
+    "@storybook/react": "^8.4.6",
+    "@storybook/react-vite": "^8.4.6",
+    "@storybook/theming": "^8.4.6",
+    "@types/react": "catalog:react18",
+    "@types/react-dom": "catalog:react18",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "serve": "^14.2.4",
+    "storybook": "^8.4.6",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "^6.0.2"
+  }
+}

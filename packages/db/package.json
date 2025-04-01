@@ -1,0 +1,21 @@
+{
+  "name": "@repo/db",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {},
+  "devDependencies": {
+    "typescript": "latest",
+    "zod": "latest"
+  },
+  "dependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@notionhq/client": "^2.2.15",
+    "typesaurus": "^10.7.0"
+  },
+  "exports": {
+    "./index": "./src/index.ts"
+  },
+  "imports": {
+    "#*": "./src/*"
+  }
+}
