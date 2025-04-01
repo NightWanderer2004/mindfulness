@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react"
-import { BaseApp, createCache } from "./Base"
+import React, { useEffect } from "react"
+import { BaseApp } from "./Base"
 import "@repo/ui/styles.css"
 
 interface WithAppProvidersProps {
@@ -13,9 +13,6 @@ export function withAppProviders<P extends object>(
 ) {
   return function AppProviders(props: P & WithAppProvidersProps) {
     const { container, ...rest } = props
-    const [styleCache, setStyleCache] = useState<ReturnType<
-      typeof createCache
-    > | null>(null)
 
     useEffect(() => {
       const repoUI = document.querySelector(UI_SELECTOR)
@@ -24,35 +21,23 @@ export function withAppProviders<P extends object>(
         return
       }
 
-      const shadowHead = repoUI.shadowRoot.querySelector("head")
-      if (!shadowHead) {
-        console.error("Could not find head in shadow DOM")
-        return
-      }
+      const shadowRoot = repoUI.shadowRoot
+      const linkElement = document.createElement("link")
+      linkElement.setAttribute("rel", "stylesheet")
 
-      const styleElement = document.createElement("style")
-      styleElement.setAttribute("data-emotion", "wxt-style")
-      shadowHead.appendChild(styleElement)
+      linkElement.setAttribute("href", "/content.css")
 
-      const cache = createCache({
-        key: "wxt-style",
-        prepend: true,
-        container: styleElement
-      })
-
-      setStyleCache(cache)
-
-      return () => {
-        shadowHead.removeChild(styleElement)
+      const shadowHead = shadowRoot.querySelector("head")
+      if (shadowHead) {
+        shadowHead.appendChild(linkElement)
+        return () => {
+          shadowHead.removeChild(linkElement)
+        }
       }
     }, [])
 
-    if (!styleCache) {
-      return null
-    }
-
     return (
-      <BaseApp styleCache={styleCache}>
+      <BaseApp>
         <WrappedComponent {...(rest as P)} />
       </BaseApp>
     )

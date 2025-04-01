@@ -10,9 +10,6 @@
     "clean": "rm -rf .turbo && rm -rf node_modules"
   },
   "dependencies": {
-    "@mui/icons-material": "catalog:",
-    "@mui/lab": "catalog:",
-    "@mui/material": "catalog:",
     "@repo/db": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
@@ -22,8 +19,6 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "devDependencies": {
-    "@emotion/cache": "catalog:",
-    "@emotion/react": "catalog:",
     "@storybook/addon-actions": "^8.4.6",
     "@storybook/addon-docs": "^8.4.6",
     "@storybook/addon-essentials": "^8.4.6",

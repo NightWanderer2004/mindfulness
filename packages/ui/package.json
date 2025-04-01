@@ -5,9 +5,6 @@
   "exports": {
     "./external": "./src/external.ts",
     "./styles.css": "./src/style/styles.css",
-    "./theme": "./src/theme.ts",
-    "./screens/*": "./src/screens/*.tsx",
-    "./sections/*": "./src/sections/*.tsx",
     "./*": "./src/*.tsx"
   },
   "devDependencies": {
@@ -22,14 +19,9 @@
     "typescript": "catalog:"
   },
   "dependencies": {
-    "@emotion/react": "catalog:",
-    "@emotion/styled": "catalog:",
     "@formkit/auto-animate": "^0.8.2",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.1.5",
-    "@mui/icons-material": "catalog:",
-    "@mui/lab": "catalog:",
-    "@mui/material": "catalog:",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
     "@radix-ui/react-select": "^2.1.2",

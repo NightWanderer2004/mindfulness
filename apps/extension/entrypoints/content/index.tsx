@@ -1,21 +1,11 @@
 import "@repo/ui/styles.css"
-import {
-  applicationStoreReadyPromise,
-  bgActions,
-  csActions,
-  useCount,
-  useSecret
-} from "../../src/bg/state"
+import { applicationStoreReadyPromise } from "../../src/bg/state"
 import { UI_SELECTOR, withAppProviders } from "../../src/cs/Content"
 import { Superwavy } from "@repo/ui/components/ui/Superwavy"
-import { ExampleComponent } from "@repo/ui/screens/Example"
 import React from "react"
 import ReactDOM from "react-dom/client"
 
 const App: React.FC = () => {
-  const count = useCount()
-  const secret = useSecret()
-
   return <Superwavy />
 }
 

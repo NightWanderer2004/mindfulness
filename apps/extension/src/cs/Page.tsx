@@ -1,16 +1,11 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
-import { BaseApp, createCache } from "./Base"
+import { BaseApp } from "./Base"
 import { applicationStoreReadyPromise } from "../bg/state"
 
 function AppWrapper({ AppComponent }: { AppComponent: React.ComponentType }) {
-  const styleCache = createCache({
-    key: "wxt-style",
-    prepend: true
-  })
-
   return (
-    <BaseApp styleCache={styleCache}>
+    <BaseApp>
       <AppComponent />
     </BaseApp>
   )
