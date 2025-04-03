@@ -1,5 +1,5 @@
 import React from "react"
-import themes from "../../assets/icons/themes.png"
+import openness from "../../assets/icons/openness.png"
 import meditate from "../../assets/icons/meditate.png"
 import cogwheel from "../../assets/icons/cogwheel.png"
 import { AnimatedButton } from "@repo/ui/components/ui/animated-btn"
@@ -22,8 +22,8 @@ const App: React.FC = () => {
         <div className="space-y-2">
           <AnimatedButton
             label="Themes"
-            icon={themes}
-            onClick={() => console.log("Themes clicked")}
+            icon={openness}
+            onClick={() => console.log("openness clicked")}
           />
           <AnimatedButton
             label="Settings"

@@ -10,7 +10,7 @@ const config: Pick<Config, "content" | "presets" | "important" | "theme"> = {
   theme: {
     extend: {
       colors: {
-        primary: "#529BC0",
+        primary: "#5093CB",
         background: "#F4F6FC",
         text: {
           primary: "#344959",
@@ -24,8 +24,6 @@ const config: Pick<Config, "content" | "presets" | "important" | "theme"> = {
         sans: ["DM Sans", "sans-serif"]
       },
       backgroundImage: {
-        "gradient-custom":
-          "linear-gradient(to right, #5093CB, #85B3D9, #75ACDE, #AEC0D6)",
         "sky-bg-popup": "url('/assets/popup-bg.png')",
         "sky-bg-main": "url('/assets/main-bg.png')"
       }
