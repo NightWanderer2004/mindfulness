@@ -1,12 +1,11 @@
 import "@repo/ui/styles.css"
 import { applicationStoreReadyPromise } from "../../src/bg/state"
 import { UI_SELECTOR, withAppProviders } from "../../src/cs/Content"
-import { Superwavy } from "@repo/ui/components/ui/Superwavy"
 import React from "react"
 import ReactDOM from "react-dom/client"
 
 const App: React.FC = () => {
-  return <Superwavy />
+  return <div>hi hi</div>
 }
 
 export default defineContentScript({
@@ -48,7 +47,6 @@ export default defineContentScript({
             console.log("Mounted")
             const app = document.createElement("div")
             app.id = "root"
-            app.style.height = "200px"
             container.append(app)
             let root: ReactDOM.Root
             const AppWithProviders = withAppProviders(App)
