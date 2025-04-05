@@ -18,7 +18,7 @@ const config: Pick<Config, "content" | "presets" | "important" | "theme"> = {
         }
       },
       boxShadow: {
-        smooth: "0px 0.5px 8px -1px rgba(0, 0, 0, 5%)"
+        smooth: "0px 0.5px 5px -1px rgba(0, 0, 0, 5%)"
       },
       fontFamily: {
         sans: ["DM Sans", "sans-serif"]

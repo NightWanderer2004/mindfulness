@@ -1,18 +1,35 @@
 import React, { useState } from "react"
+import themes from "../../assets/icons/themes.png"
 import openness from "../../assets/icons/openness.png"
 import harmony from "../../assets/icons/harmony.png"
 import exploration from "../../assets/icons/exploration.png"
 import confidence from "../../assets/icons/confidence.png"
 import tiredness from "../../assets/icons/tiredness.png"
-import soft from "../../assets/icons/soft.png"
+import softness from "../../assets/icons/softness.png"
 import { AnimatedButton } from "@repo/ui/components/ui/animated-btn"
 import { Modal } from "@repo/ui/components/ui/modal"
+import { ThemeSelector } from "@repo/ui/components/ui/theme-selector"
 import { motion } from "framer-motion"
 import { animations, cn } from "@repo/ui/src/lib/utils"
 
 const App: React.FC = () => {
   const [selectedTheme, setSelectedTheme] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
+  const icons = {
+    openness,
+    harmony,
+    exploration,
+    confidence,
+    tiredness,
+    softness
+  }
+
+  const getThemeIcon = () => {
+    if (!selectedTheme) return themes
+    const themeKey = selectedTheme.toLowerCase()
+    return icons[themeKey as keyof typeof icons]
+  }
 
   return (
     <div className="h-screen relative flex flex-col items-center justify-center pb-20 text-center text-primary overflow-hidden">
@@ -28,7 +45,7 @@ const App: React.FC = () => {
           <AnimatedButton
             className="max-w-[260px] mx-auto !bg-background/90"
             label="Choose Theme"
-            icon={openness}
+            icon={getThemeIcon()}
             onClick={() => setIsModalOpen(true)}
           />
           <motion.button
@@ -49,8 +66,8 @@ const App: React.FC = () => {
             }}>
             <span
               className={cn(
-                "text-lg text-background/75 font-medium",
-                selectedTheme && "text-background/90"
+                "text-lg text-background/75 font-medium line-through",
+                selectedTheme && "text-background/90 no-underline"
               )}>
               Begin
             </span>
@@ -65,78 +82,11 @@ const App: React.FC = () => {
         <p className="text-base text-primary/85 mb-6">
           Select a theme that resonates with your mood
         </p>
-        <div className="grid grid-cols-3 gap-4">
-          {[
-            {
-              name: "Harmony",
-              icon: harmony,
-              color: "border-amber-300/30 bg-amber-200/20",
-              hover: "hover:border-amber-300/20 hover:bg-amber-200/10",
-              text: "text-amber-600/50"
-            },
-            {
-              name: "Exploration",
-              icon: exploration,
-              color: "border-indigo-300/30 bg-indigo-200/20",
-              hover: "hover:border-indigo-300/20 hover:bg-indigo-200/10",
-              text: "text-indigo-600/50"
-            },
-            {
-              name: "Openness",
-              icon: openness,
-              color: "border-pink-300/30 bg-pink-200/20",
-              hover: "hover:border-pink-300/20 hover:bg-pink-200/10",
-              text: "text-pink-600/50"
-            },
-            {
-              name: "Confidence",
-              icon: confidence,
-              color: "border-green-300/30 bg-green-200/20",
-              hover: "hover:border-green-300/20 hover:bg-green-200/10",
-              text: "text-green-600/50"
-            },
-            {
-              name: "Soft",
-              icon: soft,
-              color: "border-blue-300/30 bg-blue-200/20",
-              hover: "hover:border-blue-300/20 hover:bg-blue-200/10",
-              text: "text-blue-600/50"
-            },
-            {
-              name: "Tiredness",
-              icon: tiredness,
-              color: "border-red-300/30 bg-red-200/20",
-              hover: "hover:border-red-300/20 hover:bg-red-200/10",
-              text: "text-red-600/50"
-            }
-          ].map((theme) => (
-            <motion.button
-              key={theme.name}
-              whileHover={animations.button.whileHover}
-              whileTap={animations.button.whileTap}
-              className={cn(
-                "py-3 px-2.5 rounded-xl border-2 transition-colors",
-                selectedTheme === theme.name
-                  ? `${theme.color} shadow-smooth`
-                  : `border-transparent ${theme.hover}`
-              )}
-              onClick={() => setSelectedTheme(theme.name)}>
-              <div
-                className={cn(
-                  "w-full rounded-lg mb-2 flex items-center justify-center"
-                )}>
-                <img
-                  src={theme.icon}
-                  alt={theme.name}
-                  className="size-16 object-contain pointer-events-none"
-                />
-              </div>
-              <span className={cn("text-base font-medium", theme.text)}>
-                {theme.name}
-              </span>
-            </motion.button>
-          ))}
-        </div>
+        <ThemeSelector
+          selectedTheme={selectedTheme}
+          setSelectedTheme={setSelectedTheme}
+          icons={icons}
+        />
       </Modal>
     </div>
   )

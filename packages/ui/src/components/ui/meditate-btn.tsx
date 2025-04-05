@@ -11,7 +11,7 @@ interface MeditateButtonProps {
 
 export const MeditateButton: React.FC<MeditateButtonProps> = ({
   icon,
-  label = "begin",
+  label = "Begin",
   onClick,
   className
 }) => {
@@ -40,7 +40,9 @@ export const MeditateButton: React.FC<MeditateButtonProps> = ({
           ease: "easeInOut"
         }}
       />
-      <span className="text-xl mt-0.5 text-primary font-medium">{label}</span>
+      <span className="text-xl mt-0.5 text-primary/90 font-medium">
+        {label}
+      </span>
     </motion.button>
   )
 }

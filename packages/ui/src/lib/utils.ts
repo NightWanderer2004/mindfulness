@@ -32,7 +32,10 @@ export const animations = {
       opacity: 0.9
     },
     transition: {
-      ...transitionBase
+      ...transitionBase,
+      backgroundColor: {
+        ease: "easeInOut"
+      }
     }
   },
 
