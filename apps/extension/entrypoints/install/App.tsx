@@ -17,6 +17,7 @@ import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import { Modal } from '@repo/ui/components/ui/modal'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
+import { ReminderTypeSelector } from '@repo/ui/components/ui/reminder-type-selector'
 import { TransitionPanel } from '@repo/ui/components/ui/transition-panel'
 import { motion } from 'framer-motion'
 import { animations, cn, transitionSmooth } from '@repo/ui/src/lib/utils'
@@ -30,6 +31,9 @@ const steps = [
     description: 'Next, had better to choose sound type',
   },
   {
+    description: 'And the last step is reminder type',
+  },
+  {
     description:
       "You're all set! Hold «space» button to start your mindful experience",
   },
@@ -38,15 +42,21 @@ const steps = [
 const App: React.FC = () => {
   const theme = useApplicationStore(state => state.theme)
   const soundType = useApplicationStore(state => state.soundType)
+  const reminderType = useApplicationStore(state => state.reminderType)
   const setTheme = useApplicationStore(state => state.setTheme)
   const setSoundType = useApplicationStore(state => state.setSoundType)
+  const setReminderType = useApplicationStore(state => state.setReminderType)
 
   const [selectedTheme, setSelectedTheme] = useState<string | null>(theme)
   const [selectedSoundType, setSelectedSoundType] = useState<string | null>(
     soundType,
   )
+  const [selectedReminderType, setSelectedReminderType] = useState<
+    string | null
+  >(reminderType)
   const [isThemeModalOpen, setIsThemeModalOpen] = useState<boolean>(false)
   const [isSoundModalOpen, setIsSoundModalOpen] = useState<boolean>(false)
+  const [isReminderModalOpen, setIsReminderModalOpen] = useState<boolean>(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   const [setupComplete, setSetupComplete] = useState(false)
@@ -66,9 +76,15 @@ const App: React.FC = () => {
     if (selectedSoundType && activeIndex === 1) {
       setDirection(1)
       setActiveIndex(2)
-      setSetupComplete(true)
     }
   }, [selectedSoundType])
+
+  useEffect(() => {
+    if (selectedReminderType && activeIndex === 2) {
+      setDirection(1)
+      setActiveIndex(3)
+    }
+  }, [selectedReminderType])
 
   const handleGoBack = () => {
     const currentStep = getCurrentStep()
@@ -80,14 +96,19 @@ const App: React.FC = () => {
 
   const handleNext = () => {
     const currentStep = getCurrentStep()
-    if (currentStep < 2) {
+    if (currentStep < 3) {
       if (currentStep === 0 && selectedTheme) {
         setDirection(1)
         setActiveIndex(1)
       } else if (currentStep === 1 && selectedSoundType) {
         setDirection(1)
         setActiveIndex(2)
-        setSetupComplete(true)
+      } else if (currentStep === 2 && selectedReminderType) {
+        setDirection(1)
+        setActiveIndex(3)
+      } else if (currentStep === 3) {
+        console.log('Setup complete, navigate to main app')
+        // Navigate to main app or close onboarding
       }
     } else {
       console.log('Setup complete, navigate to main app')
@@ -120,6 +141,11 @@ const App: React.FC = () => {
     mono,
   }
 
+  const reminderIcons = {
+    a: 'a',
+    b: 'b',
+  }
+
   const getThemeIcon = () => {
     if (!selectedTheme) return themes
     const themeKey = selectedTheme.toLowerCase()
@@ -132,6 +158,15 @@ const App: React.FC = () => {
     return soundIcons[soundKey as keyof typeof soundIcons]
   }
 
+  const getReminderIcon = () => {
+    if (!selectedReminderType) return themes // Using themes as a default icon
+    const reminderKey = selectedReminderType.toLowerCase()
+    return typeof reminderIcons[reminderKey as keyof typeof reminderIcons] ===
+      'string'
+      ? reminderIcons[reminderKey as keyof typeof reminderIcons]
+      : themes
+  }
+
   const handleThemeSelection = (theme: string) => {
     setSelectedTheme(theme)
     setTheme(theme)
@@ -142,10 +177,15 @@ const App: React.FC = () => {
     setSoundType(soundType)
   }
 
+  const handleReminderTypeSelection = (reminderType: string) => {
+    setSelectedReminderType(reminderType)
+    setReminderType(reminderType)
+  }
+
   const canProceed =
     (activeIndex === 0 && selectedTheme) ||
     (activeIndex === 1 && selectedSoundType) ||
-    activeIndex === 2
+    (activeIndex === 2 && selectedReminderType)
 
   const contentVariants = {
     enter: (direction: number) => ({
@@ -233,9 +273,31 @@ const App: React.FC = () => {
         </div>
       </div>,
 
-      // Step 3: Completion
-      <div key='complete' className='flex flex-col gap-6'>
+      // Step 3: Reminder selection
+      <div key='reminder' className='flex flex-col gap-6'>
         <p className='text-xl text-background/85'>{steps[2]?.description}</p>
+        <div className='flex flex-col gap-3'>
+          <div className='flex items-center justify-center'>
+            <AnimatedButton
+              className='max-w-[300px] !bg-background/90'
+              label={
+                selectedReminderType
+                  ? `Reminder: ${selectedReminderType}`
+                  : 'Choose Reminder'
+              }
+              icon={getReminderIcon()}
+              onClick={() => {
+                setIsReminderModalOpen(true)
+              }}
+            />
+          </div>
+          {navBtns()}
+        </div>
+      </div>,
+
+      // Step 4: Completion
+      <div key='complete' className='flex flex-col gap-6'>
+        <p className='text-xl text-background/85'>{steps[3]?.description}</p>
         <div className='flex flex-col gap-3'>
           <div className='flex items-center justify-center'>
             <motion.button
@@ -324,6 +386,28 @@ const App: React.FC = () => {
             setIsSoundModalOpen(false)
           }}
           icons={soundIcons}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={isReminderModalOpen}
+        onClose={() => setIsReminderModalOpen(false)}
+      >
+        <div className='mb-6'>
+          <h2 className='text-3xl font-medium mb-1.5 bg-gradient-to-br from-primary/70 via-primary to-primary bg-clip-text text-transparent bg-[length:200%_200%] bg-[position:0%_0%]'>
+            Choose Your Reminder
+          </h2>
+          <p className='text-base text-primary/85'>
+            Select a reminder type that helps you focus
+          </p>
+        </div>
+        <ReminderTypeSelector
+          selectedReminderType={selectedReminderType}
+          setSelectedReminderType={reminderType => {
+            handleReminderTypeSelection(reminderType)
+            setIsReminderModalOpen(false)
+          }}
+          icons={reminderIcons}
         />
       </Modal>
     </div>

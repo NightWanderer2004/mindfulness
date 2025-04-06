@@ -56,7 +56,7 @@ const App: React.FC = () => {
         />
         <div className='space-y-2'>
           <AnimatedButton
-            label='Themes'
+            label='Theme'
             icon={getThemeIcon()}
             onClick={() => setIsModalOpen(true)}
           />
@@ -75,21 +75,8 @@ const App: React.FC = () => {
         />
       </Modal>
       <Modal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)}>
-        <div className='p-4 flex flex-col gap-4'>
-          <h2 className='text-2xl font-semibold text-center'>Settings</h2>
-          <div className='space-y-4'>
-            <div className='text-text-primary p-4 rounded-lg'>
-              <h3 className='text-lg font-medium mb-2'>Reset App Data</h3>
-              <p className='text-sm  mb-3'>
-                This will reset all your preferences and stored data.
-              </p>
-              <ResetButton
-                label='Reset All Data'
-                className='w-full'
-                confirmText='Are you sure you want to reset all app data? This cannot be undone.'
-              />
-            </div>
-          </div>
+        <div className='text-text-primary p-4 border-2 border-orange-600/20 rounded-lg'>
+          <ResetButton label='Reset All Data' className='w-full' />
         </div>
       </Modal>
     </div>

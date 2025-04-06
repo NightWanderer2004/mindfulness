@@ -16,8 +16,10 @@ interface ApplicationState {
   count: number
   theme: string | null
   soundType: string | null
+  reminderType: string | null
   setTheme: (theme: string) => void
   setSoundType: (soundType: string) => void
+  setReminderType: (reminderType: string) => void
   csActions: {
     increment: () => void
   }
@@ -37,10 +39,12 @@ const createVanillaStore = () =>
         loginStatus: 'idle',
         theme: '',
         soundType: '',
+        reminderType: '',
         setUser: user => set({ user }),
         setLoginStatus: loginStatus => set({ loginStatus }),
         setTheme: theme => set({ theme }),
         setSoundType: soundType => set({ soundType }),
+        setReminderType: reminderType => set({ reminderType }),
         csActions: {
           increment: () => {
             console.log('Incremented')
@@ -73,6 +77,7 @@ const createVanillaStore = () =>
           loginStatus: state.loginStatus,
           theme: state.theme,
           soundType: state.soundType,
+          reminderType: state.reminderType,
         }),
       },
     ),
@@ -87,6 +92,8 @@ export const useSecret = () => useApplicationStore(store => store.secretText)
 export const useCount = () => useApplicationStore(store => store.count)
 export const useTheme = () => useApplicationStore(store => store.theme)
 export const useSoundType = () => useApplicationStore(store => store.soundType)
+export const useReminderType = () =>
+  useApplicationStore(store => store.reminderType)
 export const csActions = vanillaStore.getState().csActions
 export const bgActions = vanillaStore.getState().bgActions
 
