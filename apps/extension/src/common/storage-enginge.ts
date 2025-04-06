@@ -1,5 +1,6 @@
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware'
 import { localExtStorage } from '@webext-core/storage'
+import { vanillaStore } from '../bg/state'
 
 // Custom storage object
 export const webextStorage: StateStorage = {
@@ -12,4 +13,17 @@ export const webextStorage: StateStorage = {
   removeItem: async (name: string) => {
     await localExtStorage.removeItem(name)
   },
+}
+
+export const clearStorage = async () => {
+  await localExtStorage.clear()
+
+  vanillaStore.setState({
+    user: undefined,
+    count: 0,
+    secretText: undefined,
+    loginStatus: 'idle',
+    theme: '',
+    soundType: '',
+  })
 }

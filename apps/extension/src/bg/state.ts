@@ -23,7 +23,7 @@ interface ApplicationState {
   }
   bgActions: {
     refreshData: () => Promise<void>
-    resetStorage: () => Promise<boolean>
+    resetStorage: () => Promise<void>
   }
 }
 
@@ -58,8 +58,8 @@ const createVanillaStore = () =>
             set({ secretText: secret })
           },
           resetStorage: async () => {
-            const { resetAllStorage } = await import('../common/reset-storage')
-            return resetAllStorage()
+            const { clearStorage } = await import('../common/storage-enginge')
+            return clearStorage()
           },
         },
       }),
