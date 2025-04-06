@@ -8,13 +8,15 @@ interface ModalProps {
   onClose: () => void
   children: React.ReactNode
   className?: string
+  showDefaultButton?: boolean
 }
 
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   children,
-  className
+  className,
+  showDefaultButton = true
 }) => {
   return (
     <AnimatePresence mode="wait">
@@ -46,16 +48,22 @@ export const Modal: React.FC<ModalProps> = ({
                 opacity: 0,
                 scale: 0.98,
                 y: 5,
+                pointerEvents: "none",
                 transition: { duration: 0.8, ease: animations.easing.smooth }
               }}
-              transition={{ duration: 0.75, ease: animations.easing.smooth }}
+              transition={{
+                default: { duration: 0.75, ease: animations.easing.smooth },
+                pointerEvents: { duration: 0 }
+              }}
               onClick={(e) => e.stopPropagation()}>
               {children}
-              <AnimatedButton
-                className="mt-2.5 lg:mt-4 text-base lg:text-lg text-primary/90 justify-center"
-                label="Done"
-                onClick={onClose}
-              />
+              {showDefaultButton && (
+                <AnimatedButton
+                  className="mt-2.5 lg:mt-4 text-base lg:text-lg text-primary/90 justify-center"
+                  label="Done"
+                  onClick={onClose}
+                />
+              )}
             </motion.div>
           </div>
         </div>

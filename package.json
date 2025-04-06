@@ -19,6 +19,7 @@
   },
   "packageManager": "pnpm@9.14.4",
   "dependencies": {
-    "@thedutchcoder/postcss-rem-to-px": "^0.0.2"
+    "@thedutchcoder/postcss-rem-to-px": "^0.0.2",
+    "react-use-measure": "^2.1.7"
   }
 }

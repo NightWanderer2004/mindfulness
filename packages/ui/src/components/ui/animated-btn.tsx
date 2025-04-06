@@ -6,13 +6,14 @@ interface AnimatedButtonProps {
   label: string
   icon?: string
   onClick?: () => void
+  disabled?: boolean
   className?: string
 }
 
 export const AnimatedButton = forwardRef<
   HTMLButtonElement,
   AnimatedButtonProps
->(({ label, icon, onClick, className }, ref) => {
+>(({ label, icon, onClick, className, disabled = false }, ref) => {
   return (
     <motion.button
       ref={ref}
@@ -23,7 +24,8 @@ export const AnimatedButton = forwardRef<
       whileHover={animations.button.whileHover}
       whileTap={animations.button.whileTap}
       transition={animations.button.transition}
-      onClick={onClick}>
+      onClick={onClick}
+      disabled={disabled}>
       <span>{label}</span>
       {icon && (
         <img src={icon} alt="" className="w-6 h-full pointer-events-none" />
