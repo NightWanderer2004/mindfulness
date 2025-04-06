@@ -1,21 +1,27 @@
-import React, { useState } from "react"
-import themes from "../../assets/icons/themes.png"
-import openness from "../../assets/icons/openness.png"
-import meditate from "../../assets/icons/meditate.png"
-import cogwheel from "../../assets/icons/cogwheel.png"
-import harmony from "../../assets/icons/harmony.png"
-import exploration from "../../assets/icons/exploration.png"
-import confidence from "../../assets/icons/confidence.png"
-import softness from "../../assets/icons/softness.png"
-import tiredness from "../../assets/icons/tiredness.png"
-import { AnimatedButton } from "@repo/ui/components/ui/animated-btn"
-import { MeditateButton } from "@repo/ui/components/ui/meditate-btn"
-import { Modal } from "@repo/ui/components/ui/modal"
-import { ThemeSelector } from "@repo/ui/components/ui/theme-selector"
+import React, { useState, useEffect } from 'react'
+import themes from '../../assets/icons/themes.png'
+import openness from '../../assets/icons/openness.png'
+import meditate from '../../assets/icons/meditate.png'
+import cogwheel from '../../assets/icons/cogwheel.png'
+import harmony from '../../assets/icons/harmony.png'
+import exploration from '../../assets/icons/exploration.png'
+import confidence from '../../assets/icons/confidence.png'
+import softness from '../../assets/icons/softness.png'
+import tiredness from '../../assets/icons/tiredness.png'
+import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
+import { MeditateButton } from '@repo/ui/components/ui/meditate-btn'
+import { Modal } from '@repo/ui/components/ui/modal'
+import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
+import { useApplicationStore } from '../../src/bg/state'
+import ResetButton from '../../src/cs/ResetButton'
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedTheme, setSelectedTheme] = useState("Harmony")
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const storedTheme = useApplicationStore(state => state.theme)
+  const storedSoundType = useApplicationStore(state => state.soundType)
+  const setStoredTheme = useApplicationStore(state => state.setTheme)
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(storedTheme)
 
   const icons = {
     harmony: harmony,
@@ -23,7 +29,7 @@ const App: React.FC = () => {
     openness: openness,
     confidence: confidence,
     softness: softness,
-    tiredness: tiredness
+    tiredness: tiredness,
   }
 
   const getThemeIcon = () => {
@@ -32,37 +38,59 @@ const App: React.FC = () => {
     return icons[themeKey as keyof typeof icons]
   }
 
+  const handleThemeSelection = (theme: string) => {
+    setSelectedTheme(theme)
+    setStoredTheme(theme)
+  }
+
   return (
-    <div className="relative w-[350px] py-7 px-11 overflow-hidden flex flex-col items-center justify-center text-white">
-      <div className="absolute pointer-events-none inset-0 bg-sky-bg-popup bg-cover bg-center filter brightness-90" />
-      <div className="relative z-10 bg-background/90 border-[1.5px] border-primary/20 shadow-smooth backdrop-blur-sm h-full w-full flex flex-col gap-6 rounded-3xl p-4">
-        <h1 className="mt-1 text-4xl leading-none text-center font-sans font-semibold bg-gradient-to-br from-primary/70 via-primary to-primary bg-clip-text text-transparent bg-[length:200%_200%] bg-[position:0%_0%]">
+    <div className='relative w-[350px] py-7 px-11 overflow-hidden flex flex-col items-center justify-center text-white'>
+      <div className='absolute pointer-events-none inset-0 bg-sky-bg-popup bg-cover bg-center filter brightness-90' />
+      <div className='relative z-10 bg-background/90 border-[1.5px] border-primary/20 shadow-smooth backdrop-blur-sm h-full w-full flex flex-col gap-6 rounded-3xl p-4'>
+        <h1 className='mt-1 text-4xl leading-none text-center font-sans font-semibold bg-gradient-to-br from-primary/70 via-primary to-primary bg-clip-text text-transparent bg-[length:200%_200%] bg-[position:0%_0%]'>
           Mindful Tab
         </h1>
-
         <MeditateButton
           icon={meditate}
-          onClick={() => console.log("Meditate clicked")}
+          onClick={() => console.log('Meditate clicked')}
         />
-        <div className="space-y-2">
+        <div className='space-y-2'>
           <AnimatedButton
-            label="Themes"
+            label='Themes'
             icon={getThemeIcon()}
             onClick={() => setIsModalOpen(true)}
           />
           <AnimatedButton
-            label="Settings"
+            label='Settings'
             icon={cogwheel}
-            onClick={() => console.log("Settings clicked")}
+            onClick={() => setIsSettingsOpen(true)}
           />
         </div>
       </div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ThemeSelector
           selectedTheme={selectedTheme}
-          setSelectedTheme={setSelectedTheme}
+          setSelectedTheme={handleThemeSelection}
           icons={icons}
         />
+      </Modal>
+      <Modal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)}>
+        <div className='p-4 flex flex-col gap-4'>
+          <h2 className='text-2xl font-semibold text-center'>Settings</h2>
+          <div className='space-y-4'>
+            <div className='text-text-primary p-4 rounded-lg'>
+              <h3 className='text-lg font-medium mb-2'>Reset App Data</h3>
+              <p className='text-sm  mb-3'>
+                This will reset all your preferences and stored data.
+              </p>
+              <ResetButton
+                label='Reset All Data'
+                className='w-full'
+                confirmText='Are you sure you want to reset all app data? This cannot be undone.'
+              />
+            </div>
+          </div>
+        </div>
       </Modal>
     </div>
   )

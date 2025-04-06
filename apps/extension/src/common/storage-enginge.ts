@@ -1,5 +1,5 @@
-import { persist, createJSONStorage, StateStorage } from "zustand/middleware"
-import { localExtStorage } from "@webext-core/storage"
+import { persist, createJSONStorage, StateStorage } from 'zustand/middleware'
+import { localExtStorage } from '@webext-core/storage'
 
 // Custom storage object
 export const webextStorage: StateStorage = {
@@ -11,5 +11,5 @@ export const webextStorage: StateStorage = {
   },
   removeItem: async (name: string) => {
     await localExtStorage.removeItem(name)
-  }
+  },
 }
