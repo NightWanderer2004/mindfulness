@@ -5,6 +5,7 @@ import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
 import { ReminderTypeSelector } from '@repo/ui/components/ui/reminder-type-selector'
 import { TransitionPanel } from '@repo/ui/components/ui/transition-panel'
+import { HoldSphere } from '@repo/ui/components/ui/hold-sphere'
 import { motion } from 'framer-motion'
 import {
   animations,
@@ -47,7 +48,7 @@ const App: React.FC = () => {
   const [isThemeModalOpen, setIsThemeModalOpen] = useState<boolean>(false)
   const [isSoundModalOpen, setIsSoundModalOpen] = useState<boolean>(false)
   const [isReminderModalOpen, setIsReminderModalOpen] = useState<boolean>(false)
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(3)
   const [direction, setDirection] = useState(1)
   const [setupComplete, setSetupComplete] = useState(false)
 
@@ -76,6 +77,12 @@ const App: React.FC = () => {
     }
   }, [selectedReminderType])
 
+  useEffect(() => {
+    if (setupComplete && activeIndex === 3) {
+      // Navigate to main app or close onboarding
+    }
+  }, [setupComplete, activeIndex])
+
   const handleGoBack = () => {
     const currentStep = getCurrentStep()
     if (currentStep >= 1) {
@@ -96,15 +103,11 @@ const App: React.FC = () => {
       } else if (currentStep === 2 && selectedReminderType) {
         setDirection(1)
         setActiveIndex(3)
-      } else if (currentStep === 3) {
-        console.log('Setup complete, navigate to main app')
-        // Navigate to main app or close onboarding
       }
-    } else {
-      console.log('Setup complete, navigate to main app')
-      // Navigate to main app or close onboarding
     }
   }
+
+  const handleSetupComplete = () => setSetupComplete(true)
 
   const handleSetActiveIndex = (newIndex: number) => {
     setDirection(newIndex > activeIndex ? 1 : -1)
@@ -166,15 +169,18 @@ const App: React.FC = () => {
 
   const contentVariants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? 386 : -386,
+      scale: 0.95,
+      x: direction > 0 ? 300 : -300,
       opacity: 0,
     }),
     center: {
+      scale: 1,
       x: 0,
       opacity: 1,
     },
     exit: (direction: number) => ({
-      x: direction < 0 ? 386 : -386,
+      scale: 0.95,
+      x: direction < 0 ? 300 : -300,
       opacity: 0,
     }),
   }
@@ -240,21 +246,17 @@ const App: React.FC = () => {
       {
         key: 'complete',
         description: steps[3]?.description,
-        customButton: (
-          <motion.button
-            whileHover={animations.button.whileHover}
-            whileTap={animations.button.whileTap}
-            transition={animations.button.transition}
-            className={cn(
-              'flex items-center justify-between bg-primary/80 border-background/35 rounded-2xl px-5 py-1.5 shadow-smooth border-[1.5px]',
-            )}
-            onClick={handleNext}
-          >
-            <span className='text-lg text-background/90 font-medium'>
-              Finish
-            </span>
-          </motion.button>
+        customContent: (
+          <HoldSphere
+            holdDuration={3000}
+            onComplete={() => {
+              handleSetupComplete()
+            }}
+          />
         ),
+        label: '',
+        icon: '',
+        onClick: () => {},
       },
     ]
 
@@ -265,14 +267,14 @@ const App: React.FC = () => {
         label,
         icon,
         onClick,
-        customButton,
+        customContent,
         isFirstStep,
       }) => (
         <div key={key} className='flex flex-col gap-6'>
           <p className='text-xl text-background/85'>{description}</p>
           <div className='flex flex-col gap-3'>
             <div className='flex items-center justify-center'>
-              {customButton || (
+              {customContent || (
                 <AnimatedButton
                   className='max-w-[300px] !bg-background/90'
                   label={label}
@@ -281,7 +283,8 @@ const App: React.FC = () => {
                 />
               )}
             </div>
-            {navBtns(isFirstStep)}
+            {/* Only show nav buttons if no custom content */}
+            {!customContent && navBtns(isFirstStep)}
           </div>
         </div>
       ),
@@ -305,16 +308,13 @@ const App: React.FC = () => {
           Mindful Tab
         </h1>
 
-        <div
-          className='relative overflow-hidden'
-          style={{ minHeight: '200px' }}
-        >
+        <div className='relative ' style={{ minHeight: '200px' }}>
           <TransitionPanel
             activeIndex={activeIndex}
             variants={contentVariants}
             transition={{
               x: transitionSmooth,
-              opacity: { duration: 0.2 },
+              opacity: { duration: 0.15 },
             }}
             custom={direction}
           >

@@ -1,6 +1,6 @@
-import React from "react"
-import { cn, animations } from "../../lib/utils"
-import { motion } from "framer-motion"
+import React from 'react'
+import { cn, animations } from '../../lib/utils'
+import { motion } from 'framer-motion'
 
 interface MeditateButtonProps {
   icon: string
@@ -11,36 +11,37 @@ interface MeditateButtonProps {
 
 export const MeditateButton: React.FC<MeditateButtonProps> = ({
   icon,
-  label = "Begin",
+  label = 'Begin',
   onClick,
-  className
+  className,
 }) => {
   return (
     <motion.button
       className={cn(
-        "w-full py-4 bg-primary/10 rounded-xl shadow-smooth flex flex-col items-center justify-center border-[1.5px] border-primary/5",
-        className
+        'w-full py-4 bg-primary/10 rounded-xl shadow-smooth flex flex-col items-center justify-center border-[1.5px] border-primary/5',
+        className,
       )}
       whileHover={animations.meditateButton.whileHover}
       whileTap={animations.meditateButton.whileTap}
       transition={animations.meditateButton.transition}
-      onClick={onClick}>
+      onClick={onClick}
+    >
       <motion.img
         src={icon}
         alt={label}
-        className="size-9 opacity-90 pointer-events-none"
+        className='size-9 opacity-90 pointer-events-none'
         animate={{
           y: [-1.25, 1.25, -1.25, 1.25],
-          rotate: [2.5, -3, 4, -2.5]
+          rotate: [2.5, -3, 4, -2.5],
         }}
         transition={{
           duration: 5.25,
           repeat: Infinity,
-          repeatType: "mirror",
-          ease: "easeInOut"
+          repeatType: 'mirror',
+          ease: 'easeInOut',
         }}
       />
-      <span className="text-xl mt-0.5 text-primary/90 font-medium">
+      <span className='text-xl mt-0.5 text-primary/90 font-medium'>
         {label}
       </span>
     </motion.button>
