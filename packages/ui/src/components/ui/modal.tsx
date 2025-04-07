@@ -11,7 +11,13 @@ interface ModalProps {
   showDefaultButton?: boolean
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, className, showDefaultButton = true }) => {
+export const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  children,
+  className,
+  showDefaultButton = true,
+}) => {
   return (
     <AnimatePresence mode='wait'>
       {isOpen && (
@@ -29,7 +35,12 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, classNa
           />
 
           {/* Modal Content */}
-          <div className={cn('fixed inset-3 lg:inset-0 lg:bottom-[100px] flex items-center justify-center z-10', className)}>
+          <div
+            className={cn(
+              'fixed inset-3 lg:inset-0 lg:bottom-[100px] flex items-center justify-center z-10',
+              className,
+            )}
+          >
             <motion.div
               className='text-center bg-white/85 rounded-3xl lg:rounded-2xl p-3 lg:p-5 shadow-smooth border border-white/35'
               initial={{ opacity: 0, scale: 0.99, y: 8 }}
@@ -49,7 +60,11 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, classNa
             >
               {children}
               {showDefaultButton && (
-                <AnimatedButton className='mt-2.5 lg:mt-4 text-base lg:text-lg text-primary/90 justify-center' label='Done' onClick={onClose} />
+                <AnimatedButton
+                  className='mt-2.5 lg:mt-4 text-base lg:text-lg text-primary/90 justify-center'
+                  label='Done'
+                  onClick={onClose}
+                />
               )}
             </motion.div>
           </div>

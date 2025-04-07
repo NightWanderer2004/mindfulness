@@ -1,18 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import themes from '../../assets/icons/themes.png'
-
-import openness from '../../assets/icons/openness.png'
-import harmony from '../../assets/icons/harmony.png'
-import exploration from '../../assets/icons/exploration.png'
-import confidence from '../../assets/icons/confidence.png'
-import tiredness from '../../assets/icons/tiredness.png'
-import softness from '../../assets/icons/softness.png'
-
-import sound from '../../assets/icons/sound.png'
-import ambient from '../../assets/icons/sounds/ambient.png'
-import nature from '../../assets/icons/sounds/nature.png'
-import mono from '../../assets/icons/sounds/mono.png'
-
 import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import { Modal } from '@repo/ui/components/ui/modal'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
@@ -20,7 +6,12 @@ import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
 import { ReminderTypeSelector } from '@repo/ui/components/ui/reminder-type-selector'
 import { TransitionPanel } from '@repo/ui/components/ui/transition-panel'
 import { motion } from 'framer-motion'
-import { animations, cn, transitionSmooth } from '@repo/ui/src/lib/utils'
+import {
+  animations,
+  cn,
+  transitionSmooth,
+  appIcons,
+} from '@repo/ui/src/lib/utils'
 import { useApplicationStore } from '../../src/bg/state'
 
 const steps = [
@@ -34,8 +25,7 @@ const steps = [
     description: 'And the last step is reminder type',
   },
   {
-    description:
-      "You're all set! Hold «space» button to start your mindful experience",
+    description: "You're all set! Hold down «space» to finish",
   },
 ]
 
@@ -126,45 +116,32 @@ const App: React.FC = () => {
     if (activeIndex >= steps.length) setActiveIndex(steps.length - 1)
   }, [activeIndex])
 
-  const themeIcons = {
-    openness,
-    harmony,
-    exploration,
-    confidence,
-    tiredness,
-    softness,
-  }
-
-  const soundIcons = {
-    ambient,
-    nature,
-    mono,
-  }
-
-  const reminderIcons = {
-    a: 'a',
-    b: 'b',
-  }
-
   const getThemeIcon = () => {
-    if (!selectedTheme) return themes
+    if (!selectedTheme) return appIcons.utility.themes
     const themeKey = selectedTheme.toLowerCase()
-    return themeIcons[themeKey as keyof typeof themeIcons]
+    return (
+      appIcons.themeIcons[themeKey as keyof typeof appIcons.themeIcons] ||
+      appIcons.utility.themes
+    )
   }
 
   const getSoundIcon = () => {
-    if (!selectedSoundType) return sound
+    if (!selectedSoundType) return appIcons.utility.sound
     const soundKey = selectedSoundType.toLowerCase().replace(/\s+/g, '')
-    return soundIcons[soundKey as keyof typeof soundIcons]
+    return (
+      appIcons.soundIcons[soundKey as keyof typeof appIcons.soundIcons] ||
+      appIcons.utility.sound
+    )
   }
 
   const getReminderIcon = () => {
-    if (!selectedReminderType) return themes // Using themes as a default icon
+    if (!selectedReminderType) return appIcons.utility.themes // Using themes as a default icon
     const reminderKey = selectedReminderType.toLowerCase()
-    return typeof reminderIcons[reminderKey as keyof typeof reminderIcons] ===
-      'string'
-      ? reminderIcons[reminderKey as keyof typeof reminderIcons]
-      : themes
+    return (
+      appIcons.reminderIcons[
+        reminderKey as keyof typeof appIcons.reminderIcons
+      ] || appIcons.utility.themes
+    )
   }
 
   const handleThemeSelection = (theme: string) => {
@@ -217,7 +194,8 @@ const App: React.FC = () => {
       )}
 
       {(activeIndex === 0 && selectedTheme) ||
-      (activeIndex === 1 && selectedSoundType) ? (
+      (activeIndex === 1 && selectedSoundType) ||
+      (activeIndex === 2 && selectedReminderType) ? (
         <motion.button
           whileHover={animations.button.whileHover}
           whileTap={animations.button.whileTap}
@@ -232,97 +210,97 @@ const App: React.FC = () => {
   )
 
   const renderStepContent = () => {
-    return [
-      // Step 1: Theme selection
-      <div key='theme' className='flex flex-col gap-6'>
-        <p className='text-xl text-background/85'>{steps[0]?.description}</p>
-        <div className='flex flex-col gap-3'>
-          <div className='flex items-center gap-3 justify-center'>
-            <AnimatedButton
-              className='max-w-[300px] !bg-background/90'
-              label={selectedTheme ? `Theme: ${selectedTheme}` : 'Choose Theme'}
-              icon={getThemeIcon()}
-              onClick={() => {
-                setIsThemeModalOpen(true)
-              }}
-            />
-          </div>
-          {navBtns(true)}
-        </div>
-      </div>,
-
-      // Step 2: Sound selection
-      <div key='sound' className='flex flex-col gap-6'>
-        <p className='text-xl text-background/85'>{steps[1]?.description}</p>
-        <div className='flex flex-col gap-3'>
-          <div className='flex items-center gap-3 justify-center'>
-            <AnimatedButton
-              className='max-w-[300px] !bg-background/90'
-              label={
-                selectedSoundType
-                  ? `Sound: ${selectedSoundType}`
-                  : 'Choose Sound'
-              }
-              icon={getSoundIcon()}
-              onClick={() => {
-                setIsSoundModalOpen(true)
-              }}
-            />
-          </div>
-          {navBtns()}
-        </div>
-      </div>,
-
-      // Step 3: Reminder selection
-      <div key='reminder' className='flex flex-col gap-6'>
-        <p className='text-xl text-background/85'>{steps[2]?.description}</p>
-        <div className='flex flex-col gap-3'>
-          <div className='flex items-center justify-center'>
-            <AnimatedButton
-              className='max-w-[300px] !bg-background/90'
-              label={
-                selectedReminderType
-                  ? `Reminder: ${selectedReminderType}`
-                  : 'Choose Reminder'
-              }
-              icon={getReminderIcon()}
-              onClick={() => {
-                setIsReminderModalOpen(true)
-              }}
-            />
-          </div>
-          {navBtns()}
-        </div>
-      </div>,
-
-      // Step 4: Completion
-      <div key='complete' className='flex flex-col gap-6'>
-        <p className='text-xl text-background/85'>{steps[3]?.description}</p>
-        <div className='flex flex-col gap-3'>
-          <div className='flex items-center justify-center'>
-            <motion.button
-              whileHover={animations.button.whileHover}
-              whileTap={animations.button.whileTap}
-              transition={animations.button.transition}
-              className={cn(
-                'flex items-center justify-between bg-primary/80 border-background/35 rounded-2xl px-5 py-1.5 shadow-smooth border-[1.5px]',
-              )}
-              onClick={handleNext}
-            >
-              <span className='text-lg text-background/90 font-medium'>
-                Finish
-              </span>
-            </motion.button>
-          </div>
-        </div>
-      </div>,
+    const stepConfig = [
+      {
+        key: 'theme',
+        description: steps[0]?.description,
+        label: selectedTheme ? `Theme: ${selectedTheme}` : 'Choose Theme',
+        icon: getThemeIcon(),
+        onClick: () => setIsThemeModalOpen(true),
+        isFirstStep: true,
+      },
+      {
+        key: 'sound',
+        description: steps[1]?.description,
+        label: selectedSoundType
+          ? `Sound: ${selectedSoundType}`
+          : 'Choose Sound',
+        icon: getSoundIcon(),
+        onClick: () => setIsSoundModalOpen(true),
+      },
+      {
+        key: 'reminder',
+        description: steps[2]?.description,
+        label: selectedReminderType
+          ? `Reminder: ${selectedReminderType}`
+          : 'Choose Reminder',
+        icon: getReminderIcon(),
+        onClick: () => setIsReminderModalOpen(true),
+      },
+      {
+        key: 'complete',
+        description: steps[3]?.description,
+        customButton: (
+          <motion.button
+            whileHover={animations.button.whileHover}
+            whileTap={animations.button.whileTap}
+            transition={animations.button.transition}
+            className={cn(
+              'flex items-center justify-between bg-primary/80 border-background/35 rounded-2xl px-5 py-1.5 shadow-smooth border-[1.5px]',
+            )}
+            onClick={handleNext}
+          >
+            <span className='text-lg text-background/90 font-medium'>
+              Finish
+            </span>
+          </motion.button>
+        ),
+      },
     ]
+
+    return stepConfig.map(
+      ({
+        key,
+        description,
+        label,
+        icon,
+        onClick,
+        customButton,
+        isFirstStep,
+      }) => (
+        <div key={key} className='flex flex-col gap-6'>
+          <p className='text-xl text-background/85'>{description}</p>
+          <div className='flex flex-col gap-3'>
+            <div className='flex items-center justify-center'>
+              {customButton || (
+                <AnimatedButton
+                  className='max-w-[300px] !bg-background/90'
+                  label={label}
+                  icon={icon}
+                  onClick={onClick}
+                />
+              )}
+            </div>
+            {navBtns(isFirstStep)}
+          </div>
+        </div>
+      ),
+    )
   }
 
   return (
     <div className='h-screen relative flex flex-col items-center justify-center pb-20 text-center text-primary overflow-hidden'>
       <div className='absolute inset-0 bg-sky-bg-main bg-cover bg-center bg-no-repeat blur-sm scale-105 pointer-events-none brightness-110 z-0' />
-      <div className='z-20 w-full max-w-sm mx-auto'>
+      <motion.div
+        initial={{ y: 12, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{
+          ...transitionSmooth,
+          delay: 0.125,
+          opacity: { ease: 'linear', delay: 0.145 },
+        }}
+        className='z-20 w-full max-w-sm mx-auto'
+      >
         <h1 className='mb-2.5 text-6xl leading-none text-center font-sans font-semibold bg-gradient-to-br from-background/90 via-background/65 to-background/55 bg-clip-text text-transparent bg-[length:250%_250%] bg-[position:0%_0%]'>
           Mindful Tab
         </h1>
@@ -343,7 +321,7 @@ const App: React.FC = () => {
             {renderStepContent()}
           </TransitionPanel>
         </div>
-      </div>
+      </motion.div>
 
       <Modal
         isOpen={isThemeModalOpen}
@@ -363,7 +341,7 @@ const App: React.FC = () => {
             handleThemeSelection(theme)
             setIsThemeModalOpen(false)
           }}
-          icons={themeIcons}
+          icons={appIcons.themeIcons}
         />
       </Modal>
 
@@ -385,7 +363,7 @@ const App: React.FC = () => {
             handleSoundTypeSelection(soundType)
             setIsSoundModalOpen(false)
           }}
-          icons={soundIcons}
+          icons={appIcons.soundIcons}
         />
       </Modal>
 
@@ -398,7 +376,7 @@ const App: React.FC = () => {
             Choose Your Reminder
           </h2>
           <p className='text-base text-primary/85'>
-            Select a reminder type that helps you focus
+            Select a reminder type that will appear on sites
           </p>
         </div>
         <ReminderTypeSelector
@@ -407,7 +385,7 @@ const App: React.FC = () => {
             handleReminderTypeSelection(reminderType)
             setIsReminderModalOpen(false)
           }}
-          icons={reminderIcons}
+          icons={appIcons.reminderIcons}
         />
       </Modal>
     </div>

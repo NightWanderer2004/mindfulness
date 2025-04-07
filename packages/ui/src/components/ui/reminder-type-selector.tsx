@@ -19,21 +19,21 @@ export const ReminderTypeSelector: React.FC<ReminderTypeSelectorProps> = ({
 }) => {
   const reminderTypes = [
     {
-      name: 'A',
-      color: 'border-green-400/40 bg-green-200/20',
-      hover: 'hover:border-green-300/30 hover:bg-green-100/20',
-      text: 'text-green-600/50',
+      name: 'Sunshine',
+      color: 'border-amber-400/40 bg-amber-200/20',
+      hover: 'hover:border-amber-300/30 hover:bg-amber-100/20',
+      text: 'text-amber-600/50',
     },
     {
-      name: 'B',
-      color: 'border-purple-400/30 bg-purple-200/20',
-      hover: 'hover:border-purple-400/20 hover:bg-purple-100/20',
-      text: 'text-purple-600/50',
+      name: 'Blossom',
+      color: 'border-blue-400/30 bg-blue-200/20',
+      hover: 'hover:border-blue-400/20 hover:bg-blue-100/20',
+      text: 'text-blue-500/50',
     },
   ]
 
   return (
-    <div className='grid grid-cols-2 place-items-center gap-4'>
+    <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-1.5 lg:gap-4'>
       {reminderTypes.map(reminderType => (
         <motion.button
           key={reminderType.name}

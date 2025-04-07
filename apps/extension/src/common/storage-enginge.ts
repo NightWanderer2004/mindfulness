@@ -25,5 +25,6 @@ export const clearStorage = async () => {
     loginStatus: 'idle',
     theme: '',
     soundType: '',
+    reminderType: '',
   })
 }

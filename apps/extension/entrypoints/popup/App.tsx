@@ -1,46 +1,75 @@
 import React, { useState, useEffect } from 'react'
-import themes from '../../assets/icons/themes.png'
-import openness from '../../assets/icons/openness.png'
-import meditate from '../../assets/icons/meditate.png'
-import cogwheel from '../../assets/icons/cogwheel.png'
-import harmony from '../../assets/icons/harmony.png'
-import exploration from '../../assets/icons/exploration.png'
-import confidence from '../../assets/icons/confidence.png'
-import softness from '../../assets/icons/softness.png'
-import tiredness from '../../assets/icons/tiredness.png'
 import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import { MeditateButton } from '@repo/ui/components/ui/meditate-btn'
 import { Modal } from '@repo/ui/components/ui/modal'
-import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
+import { TabModal } from '@repo/ui/components/ui/tab-modal'
 import { useApplicationStore } from '../../src/bg/state'
 import ResetButton from '../../src/cs/ResetButton'
+import { appIcons } from '@repo/ui/src/lib/utils'
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
   const storedTheme = useApplicationStore(state => state.theme)
   const storedSoundType = useApplicationStore(state => state.soundType)
-  const setStoredTheme = useApplicationStore(state => state.setTheme)
-  const [selectedTheme, setSelectedTheme] = useState<string | null>(storedTheme)
+  const storedReminderType = useApplicationStore(state => state.reminderType)
 
-  const icons = {
-    harmony: harmony,
-    exploration: exploration,
-    openness: openness,
-    confidence: confidence,
-    softness: softness,
-    tiredness: tiredness,
-  }
+  const setStoredTheme = useApplicationStore(state => state.setTheme)
+  const setStoredSoundType = useApplicationStore(state => state.setSoundType)
+  const setStoredReminderType = useApplicationStore(
+    state => state.setReminderType,
+  )
+
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(storedTheme)
+  const [selectedSoundType, setSelectedSoundType] = useState<string | null>(
+    storedSoundType,
+  )
+  const [selectedReminderType, setSelectedReminderType] = useState<
+    string | null
+  >(storedReminderType)
 
   const getThemeIcon = () => {
-    if (!selectedTheme) return themes
+    if (!selectedTheme) return appIcons.utility.themes
     const themeKey = selectedTheme.toLowerCase()
-    return icons[themeKey as keyof typeof icons]
+    return (
+      appIcons.themeIcons[themeKey as keyof typeof appIcons.themeIcons] ||
+      appIcons.utility.themes
+    )
+  }
+
+  const getSoundIcon = () => {
+    if (!selectedSoundType) return appIcons.utility.sound
+    const soundKey = selectedSoundType.toLowerCase()
+    return (
+      appIcons.soundIcons[soundKey as keyof typeof appIcons.soundIcons] ||
+      appIcons.utility.sound
+    )
+  }
+
+  const getReminderIcon = () => {
+    if (!selectedReminderType) return appIcons.utility.themes
+    const reminderKey = selectedReminderType.toLowerCase()
+    return (
+      appIcons.reminderIcons[
+        reminderKey as keyof typeof appIcons.reminderIcons
+      ] || appIcons.utility.themes
+    )
   }
 
   const handleThemeSelection = (theme: string) => {
     setSelectedTheme(theme)
     setStoredTheme(theme)
+  }
+
+  const handleSoundTypeSelection = (soundType: string) => {
+    setSelectedSoundType(soundType)
+    setStoredSoundType(soundType)
+  }
+
+  const handleReminderTypeSelection = (reminderType: string) => {
+    setSelectedReminderType(reminderType)
+    setStoredReminderType(reminderType)
   }
 
   return (
@@ -51,31 +80,39 @@ const App: React.FC = () => {
           Mindful Tab
         </h1>
         <MeditateButton
-          icon={meditate}
+          icon={appIcons.utility.meditate}
           onClick={() => console.log('Meditate clicked')}
         />
         <div className='space-y-2'>
           <AnimatedButton
-            label='Theme'
+            label='Themes'
             icon={getThemeIcon()}
             onClick={() => setIsModalOpen(true)}
           />
           <AnimatedButton
             label='Settings'
-            icon={cogwheel}
+            icon={appIcons.utility.cogwheel}
             onClick={() => setIsSettingsOpen(true)}
           />
         </div>
       </div>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <ThemeSelector
-          selectedTheme={selectedTheme}
-          setSelectedTheme={handleThemeSelection}
-          icons={icons}
-        />
-      </Modal>
+
+      <TabModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        selectedTheme={selectedTheme}
+        selectedSoundType={selectedSoundType}
+        selectedReminderType={selectedReminderType}
+        handleThemeSelection={handleThemeSelection}
+        handleSoundTypeSelection={handleSoundTypeSelection}
+        handleReminderTypeSelection={handleReminderTypeSelection}
+      />
+
       <Modal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)}>
         <div className='text-text-primary p-4 border-2 border-orange-600/20 rounded-lg'>
+          <p className='text-sm text-primary/70 mb-4'>
+            Reset all data and return to default settings
+          </p>
           <ResetButton label='Reset All Data' className='w-full' />
         </div>
       </Modal>
