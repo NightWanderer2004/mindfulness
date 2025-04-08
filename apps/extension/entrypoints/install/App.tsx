@@ -26,7 +26,8 @@ const steps = [
     description: 'And the last step is reminder type',
   },
   {
-    description: "You're all set! Hold down «space» to finish",
+    description:
+      'All set! To start using the extension, click the icon in the browser toolbar and open the pop-up. Hold «space» to finish.',
   },
 ]
 
@@ -48,7 +49,7 @@ const App: React.FC = () => {
   const [isThemeModalOpen, setIsThemeModalOpen] = useState<boolean>(false)
   const [isSoundModalOpen, setIsSoundModalOpen] = useState<boolean>(false)
   const [isReminderModalOpen, setIsReminderModalOpen] = useState<boolean>(false)
-  const [activeIndex, setActiveIndex] = useState(3)
+  const [activeIndex, setActiveIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   const [setupComplete, setSetupComplete] = useState(false)
 
@@ -79,7 +80,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (setupComplete && activeIndex === 3) {
-      // Navigate to main app or close onboarding
+      handleCloseTab()
     }
   }, [setupComplete, activeIndex])
 
@@ -108,6 +109,10 @@ const App: React.FC = () => {
   }
 
   const handleSetupComplete = () => setSetupComplete(true)
+
+  const handleCloseTab = () => {
+    window.close()
+  }
 
   const handleSetActiveIndex = (newIndex: number) => {
     setDirection(newIndex > activeIndex ? 1 : -1)
@@ -248,15 +253,12 @@ const App: React.FC = () => {
         description: steps[3]?.description,
         customContent: (
           <HoldSphere
-            holdDuration={3000}
+            holdDuration={2200}
             onComplete={() => {
               handleSetupComplete()
             }}
           />
         ),
-        label: '',
-        icon: '',
-        onClick: () => {},
       },
     ]
 
@@ -283,7 +285,6 @@ const App: React.FC = () => {
                 />
               )}
             </div>
-            {/* Only show nav buttons if no custom content */}
             {!customContent && navBtns(isFirstStep)}
           </div>
         </div>

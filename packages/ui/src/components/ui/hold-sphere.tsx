@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, useAnimation } from 'framer-motion'
-import { cn, transitionSmooth } from '../../lib/utils'
+import { animations, cn, transitionSmooth } from '../../lib/utils'
 
 interface HoldSphereProps {
   holdDuration: number // Duration in ms
-  onComplete?: () => void
+  onComplete: () => void
   className?: string
 }
 
@@ -14,19 +14,19 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
   className,
 }) => {
   const size = 105
-  const blurAmount = 8
+  const blurAmount = 6
 
   const [isHolding, setIsHolding] = useState(false)
   const [progress, setProgress] = useState(0)
   const [complete, setComplete] = useState(false)
-  const [showAlert, setShowAlert] = useState(false)
 
   const controls = useAnimation()
 
   const floatAnimation = useMemo(
     () => ({
       float: {
-        y: [0, -5, 0],
+        y: [0, -4, 0],
+        rotate: [0, 180, 0],
         transition: {
           y: {
             repeat: Infinity,
@@ -34,14 +34,13 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
             ease: 'easeInOut',
             repeatType: 'loop',
           },
+          rotate: {
+            repeat: Infinity,
+            duration: 15,
+            ease: 'easeInOut',
+            repeatType: 'loop',
+          },
         },
-      },
-      complete: {
-        opacity: 0,
-        scale: 0.7,
-        filter: `blur(${blurAmount * 3.5}px)`,
-        y: 0,
-        transition: { ...transitionSmooth },
       },
       normal: {
         opacity: 1,
@@ -58,12 +57,8 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
   }, [controls])
 
   useEffect(() => {
-    if (complete) {
-      controls.start('complete')
-    } else {
-      controls.start('float')
-    }
-  }, [complete, controls])
+    controls.start('float')
+  }, [controls])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -120,10 +115,7 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
   }, [isHolding, holdDuration])
 
   useEffect(() => {
-    if (complete) {
-      setShowAlert(true)
-      if (onComplete) onComplete()
-    }
+    if (complete) onComplete()
   }, [complete, onComplete])
 
   useEffect(() => {
@@ -146,7 +138,7 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
     >
       {/* Outer sphere container */}
       <motion.div
-        className='absolute rounded-full border-4 bg-background/15 border-background/35'
+        className='absolute rounded-full border-4 bg-background/[16.5%] border-background/35 shadow-[inset_1.5px_2px_0_2px_rgba(255,251,238,1),inset_-2px_-4px_0_1.5px_rgba(255,255,255,0.75)]'
         style={{
           width: size,
           height: size,
@@ -159,7 +151,7 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
         }}
         transition={{
           duration: 0.8,
-          ease: 'easeOut',
+          ease: animations.easing.smooth,
         }}
       />
 
@@ -169,7 +161,7 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
         style={{
           width: size,
           height: size,
-          filter: `blur(${blurAmount * 2.25}px)`,
+          filter: `blur(${blurAmount * 1.75}px)`,
           transformOrigin: 'center',
         }}
         initial={{ scale: 0, opacity: 0 }}
