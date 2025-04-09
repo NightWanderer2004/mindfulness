@@ -301,7 +301,7 @@ const App: React.FC = () => {
         className='z-20 w-full max-w-sm mx-auto'
       >
         <h1 className='mb-2.5 text-6xl leading-none text-center font-sans font-semibold bg-gradient-to-br from-background/90 via-background/65 to-background/55 bg-clip-text text-transparent bg-[length:250%_250%] bg-[position:0%_0%]'>
-          Mindful Tab
+          MindfulTab
         </h1>
 
         <div className='relative ' style={{ minHeight: '200px' }}>

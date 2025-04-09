@@ -5,11 +5,12 @@ import { Modal } from '@repo/ui/components/ui/modal'
 import { TabModal } from '@repo/ui/components/ui/tab-modal'
 import { useApplicationStore } from '../../src/bg/state'
 import ResetButton from '../../src/cs/ResetButton'
-import { appIcons } from '@repo/ui/src/lib/utils'
+import { appIcons, cn } from '@repo/ui/src/lib/utils'
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isSessionActive, setIsSessionActive] = useState(false)
 
   const storedTheme = useApplicationStore(state => state.theme)
   const storedSoundType = useApplicationStore(state => state.soundType)
@@ -28,6 +29,21 @@ const App: React.FC = () => {
   const [selectedReminderType, setSelectedReminderType] = useState<
     string | null
   >(storedReminderType)
+
+  useEffect(() => {
+    checkSessionStatus()
+  }, [])
+
+  const checkSessionStatus = () => {
+    if (typeof chrome !== 'undefined' && chrome.tabs && chrome.runtime) {
+      chrome.tabs.query(
+        { url: chrome.runtime.getURL('session.html') },
+        tabs => {
+          setIsSessionActive(tabs.length > 0)
+        },
+      )
+    }
+  }
 
   const getThemeIcon = () => {
     if (!selectedTheme) return appIcons.utility.themes
@@ -74,35 +90,52 @@ const App: React.FC = () => {
 
   const handleOpenContentPage = () => {
     if (typeof chrome !== 'undefined' && chrome.tabs && chrome.runtime) {
-      chrome.tabs.create({
-        url: chrome.runtime.getURL('session.html'),
-      })
+      chrome.tabs.create(
+        {
+          url: chrome.runtime.getURL('session.html'),
+        },
+        () => setIsSessionActive(true),
+      )
     }
   }
 
   return (
     <div className='relative w-[350px] py-7 px-11 overflow-hidden flex flex-col items-center justify-center text-white'>
       <div className='absolute pointer-events-none inset-0 bg-sky-bg-popup bg-cover bg-center filter brightness-90' />
-      <div className='relative z-10 bg-background/90 border-[1.5px] border-primary/20 shadow-smooth backdrop-blur-sm h-full w-full flex flex-col gap-6 rounded-3xl p-4'>
+      <div
+        className={cn(
+          'relative z-10 bg-background/90 border-[1.5px] border-primary/20 shadow-smooth backdrop-blur-sm h-full w-full flex flex-col rounded-3xl p-4',
+          isSessionActive ? 'gap-3' : 'gap-6',
+        )}
+      >
         <h1 className='mt-1 text-4xl leading-none text-center font-sans font-semibold bg-gradient-to-br from-primary/70 via-primary to-primary bg-clip-text text-transparent bg-[length:200%_200%] bg-[position:0%_0%]'>
-          Mindful Tab
+          MindfulTab
         </h1>
-        <MeditateButton
-          icon={appIcons.utility.meditate}
-          onClick={handleOpenContentPage}
-        />
-        <div className='space-y-2'>
-          <AnimatedButton
-            label='Themes'
-            icon={getThemeIcon()}
-            onClick={() => setIsModalOpen(true)}
-          />
-          <AnimatedButton
-            label='Settings'
-            icon={appIcons.utility.cogwheel}
-            onClick={() => setIsSettingsOpen(true)}
-          />
-        </div>
+
+        {isSessionActive ? (
+          <p className='text-primary/85 text-base text-center font-medium'>
+            You're already in session
+          </p>
+        ) : (
+          <div>
+            <MeditateButton
+              icon={appIcons.utility.meditate}
+              onClick={handleOpenContentPage}
+            />
+            <div className='space-y-2'>
+              <AnimatedButton
+                label='Themes'
+                icon={getThemeIcon()}
+                onClick={() => setIsModalOpen(true)}
+              />
+              <AnimatedButton
+                label='Settings'
+                icon={appIcons.utility.cogwheel}
+                onClick={() => setIsSettingsOpen(true)}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <TabModal

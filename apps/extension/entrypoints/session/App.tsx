@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useApplicationStore, vanillaStore } from '../../src/bg/state'
 import { motion } from 'framer-motion'
-import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import { Modal } from '@repo/ui/components/ui/modal'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
-import { appIcons, animations } from '@repo/ui/src/lib/utils'
+import { ThemeSoundControls } from '@repo/ui/components/ui/theme-sound-controls'
+import { appIcons } from '@repo/ui/src/lib/utils'
 type ImageImport = {
   default: string
 }
@@ -20,34 +20,14 @@ type ThemeType =
 
 type SoundType = 'ambient' | 'nature' | 'mono'
 
-const audioLoaders: Record<
-  SoundType,
-  Record<ThemeType, () => Promise<ImageImport>>
-> = {
-  ambient: {
-    harmony: () => import('../../assets/music/harmony.mp3'),
-    wandering: () => import('../../assets/music/wandering.mp3'),
-    openness: () => import('../../assets/music/openness.mp3'),
-    confidence: () => import('../../assets/music/confidence.mp3'),
-    softness: () => import('../../assets/music/softness.mp3'),
-    tiredness: () => import('../../assets/music/tiredness.mp3'),
-  },
-  nature: {
-    harmony: () => import('../../assets/nature/harmony.mp3'),
-    wandering: () => import('../../assets/nature/wandering.mp3'),
-    openness: () => import('../../assets/nature/openness.mp3'),
-    confidence: () => import('../../assets/nature/confidence.mp3'),
-    softness: () => import('../../assets/nature/softness.mp3'),
-    tiredness: () => import('../../assets/nature/tiredness.mp3'),
-  },
-  mono: {
-    harmony: () => import('../../assets/mono/harmony.mp3'),
-    wandering: () => import('../../assets/mono/wandering.mp3'),
-    openness: () => import('../../assets/mono/openness.mp3'),
-    confidence: () => import('../../assets/mono/confidence.mp3'),
-    softness: () => import('../../assets/mono/softness.mp3'),
-    tiredness: () => import('../../assets/mono/tiredness.mp3'),
-  },
+const loadMusicTrack = (theme: ThemeType, trackNumber: number) => {
+  return import(
+    `../../assets/music/${theme}/${theme.toUpperCase()}_0${trackNumber}.mp3`
+  )
+}
+
+const loadSingleTrack = (soundType: SoundType, theme: ThemeType) => {
+  return import(`../../assets/${soundType}/${theme}.mp3`)
 }
 
 const imageMap: Record<
@@ -97,13 +77,13 @@ const App: React.FC = () => {
   const [backgroundUrl, setBackgroundUrl] = useState<string>('')
   const [isThemeModalOpen, setIsThemeModalOpen] = useState<boolean>(false)
   const [isSoundModalOpen, setIsSoundModalOpen] = useState<boolean>(false)
+  const [currentTrackNumber, setCurrentTrackNumber] = useState<number>(1)
 
   const imageNumberRef = useRef<number>(0)
   const previousThemeRef = useRef<string | null>(null)
+  const previousSoundTypeRef = useRef<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const isAudioTransitioning = useRef<boolean>(false)
-
-  const [isHovering, setIsHovering] = useState<boolean>(false)
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const backgroundRef = useRef<HTMLDivElement>(null)
@@ -188,19 +168,28 @@ const App: React.FC = () => {
     if (!theme || !soundType) return
 
     const themeChanged = previousThemeRef.current !== theme
-    previousThemeRef.current = theme
+    const soundTypeChanged = previousSoundTypeRef.current !== soundType
 
-    if (themeChanged && audioRef.current) {
-      stopAudioSmoothly(audioRef.current).then(() => {
-        audioRef.current = null
-      })
-      return
+    previousThemeRef.current = theme
+    previousSoundTypeRef.current = soundType
+
+    if (themeChanged || soundTypeChanged) {
+      if (audioRef.current) {
+        stopAudioSmoothly(audioRef.current).then(() => {
+          audioRef.current = null
+          setCurrentTrackNumber(1)
+          playAudio()
+        })
+      } else {
+        setCurrentTrackNumber(1)
+        playAudio()
+      }
     }
 
-    if (isAudioTransitioning.current) return
-    isAudioTransitioning.current = true
+    async function playAudio() {
+      if (isAudioTransitioning.current || !theme || !soundType) return
+      isAudioTransitioning.current = true
 
-    const loadAndPlayAudio = async () => {
       try {
         if (audioRef.current) {
           await stopAudioSmoothly(audioRef.current)
@@ -209,20 +198,42 @@ const App: React.FC = () => {
         const themeName = theme.toLowerCase() as ThemeType
         const currentSoundType = soundType.toLowerCase() as SoundType
 
-        const soundTypeLoaders = audioLoaders[currentSoundType]
-        const audioLoader = soundTypeLoaders?.[themeName]
+        try {
+          let audioModule
 
-        if (audioLoader) {
-          const audioModule = await audioLoader()
+          if (currentSoundType === 'ambient') {
+            audioModule = await loadMusicTrack(themeName, currentTrackNumber)
+          } else {
+            audioModule = await loadSingleTrack(currentSoundType, themeName)
+          }
+
           const newAudio = new Audio(audioModule.default)
-
-          newAudio.loop = true
           newAudio.volume = 0.7
           newAudio.preload = 'auto'
 
-          audioRef.current = newAudio
+          if (currentSoundType === 'ambient') {
+            newAudio.addEventListener('ended', () => {
+              const nextTrack =
+                currentTrackNumber < 4 ? currentTrackNumber + 1 : 1
+              setCurrentTrackNumber(nextTrack)
+            })
+          } else {
+            newAudio.loop = true
+          }
 
+          audioRef.current = newAudio
           await newAudio.play()
+        } catch (error) {
+          console.error(
+            `Failed to load audio for theme ${themeName} with sound type ${currentSoundType}:`,
+            error,
+          )
+
+          if (currentSoundType === 'ambient') {
+            setCurrentTrackNumber(
+              currentTrackNumber < 4 ? currentTrackNumber + 1 : 1,
+            )
+          }
         }
       } catch (error) {
         console.error('Audio error:', error)
@@ -231,14 +242,14 @@ const App: React.FC = () => {
       }
     }
 
-    loadAndPlayAudio()
+    if (soundType.toLowerCase() === 'ambient') playAudio()
 
     return () => {
       if (audioRef.current) {
         stopAudioSmoothly(audioRef.current)
       }
     }
-  }, [theme, soundType])
+  }, [theme, soundType, currentTrackNumber])
 
   const parallaxX = (50 - mousePosition.x) * movementMultiplier
   const parallaxY = (50 - mousePosition.y) * movementMultiplier
@@ -288,54 +299,15 @@ const App: React.FC = () => {
         animate={{ opacity: 0 }}
         transition={{ duration: 1, delay: 0.25, ease: 'easeInOut' }}
       />
-      <div className='relative max-w-md w-full'>
-        <motion.div
-          className='relative w-full h-[55px] overflow-hidden'
-          transition={{ duration: 0.3, ease: animations.easing.smooth }}
-          onHoverStart={() => setIsHovering(true)}
-          onHoverEnd={() => setIsHovering(false)}
-        >
-          <motion.div
-            className='absolute w-full flex items-center justify-center bottom-3 pointer-events-none'
-            initial={{ opacity: 1 }}
-            animate={{
-              opacity: isHovering ? 0 : 1,
-              y: [-1.35, 1.35, -1.35, 1.35],
-            }}
-            transition={{
-              y: {
-                duration: 5.25,
-                repeat: Infinity,
-                repeatType: 'mirror',
-                ease: 'easeInOut',
-              },
-              opacity: { duration: 0.2, ease: 'linear' },
-            }}
-          >
-            <div className='w-12 h-1.5 bg-background/70 rounded-full' />
-          </motion.div>
 
-          <motion.div
-            className='flex items-end justify-center gap-5'
-            initial={{ y: 55 }}
-            animate={{ y: isHovering ? 0 : 55 }}
-            transition={{ duration: 0.5, ease: animations.easing.smooth }}
-          >
-            <AnimatedButton
-              className='max-w-[180px] !bg-background/90'
-              label={theme ? `${theme}` : 'Choose Theme'}
-              icon={getThemeIcon()}
-              onClick={() => setIsThemeModalOpen(true)}
-            />
-            <AnimatedButton
-              className='max-w-[180px] !bg-background/90'
-              label={soundType ? `${soundType}` : 'Choose Sound'}
-              icon={getSoundIcon()}
-              onClick={() => setIsSoundModalOpen(true)}
-            />
-          </motion.div>
-        </motion.div>
-      </div>
+      <ThemeSoundControls
+        theme={theme}
+        soundType={soundType}
+        getThemeIcon={getThemeIcon}
+        getSoundIcon={getSoundIcon}
+        onThemeClick={() => setIsThemeModalOpen(true)}
+        onSoundClick={() => setIsSoundModalOpen(true)}
+      />
 
       <Modal
         isOpen={isThemeModalOpen}
