@@ -72,6 +72,14 @@ const App: React.FC = () => {
     setStoredReminderType(reminderType)
   }
 
+  const handleOpenContentPage = () => {
+    if (typeof chrome !== 'undefined' && chrome.tabs && chrome.runtime) {
+      chrome.tabs.create({
+        url: chrome.runtime.getURL('session.html'),
+      })
+    }
+  }
+
   return (
     <div className='relative w-[350px] py-7 px-11 overflow-hidden flex flex-col items-center justify-center text-white'>
       <div className='absolute pointer-events-none inset-0 bg-sky-bg-popup bg-cover bg-center filter brightness-90' />
@@ -81,7 +89,7 @@ const App: React.FC = () => {
         </h1>
         <MeditateButton
           icon={appIcons.utility.meditate}
-          onClick={() => console.log('Meditate clicked')}
+          onClick={handleOpenContentPage}
         />
         <div className='space-y-2'>
           <AnimatedButton

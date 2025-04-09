@@ -26,8 +26,8 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
       text: 'text-amber-600/50',
     },
     {
-      name: 'Exploration',
-      icon: icons.exploration,
+      name: 'Wandering',
+      icon: icons.wandering,
       color: 'border-blue-400/30 bg-blue-200/20',
       hover: 'hover:border-blue-400/20 hover:bg-blue-100/20',
       text: 'text-blue-600/50',

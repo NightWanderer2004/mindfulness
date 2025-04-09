@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge'
 
 import openness from '../../assets/icons/openness.png'
 import harmony from '../../assets/icons/harmony.png'
-import exploration from '../../assets/icons/exploration.png'
+import wandering from '../../assets/icons/wandering.png'
 import confidence from '../../assets/icons/confidence.png'
 import tiredness from '../../assets/icons/tiredness.png'
 import softness from '../../assets/icons/softness.png'
@@ -76,7 +76,7 @@ export const appIcons = {
   themeIcons: {
     openness,
     harmony,
-    exploration,
+    wandering,
     confidence,
     tiredness,
     softness,

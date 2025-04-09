@@ -77,7 +77,7 @@ export const TabModal: React.FC<TabModalProps> = ({
             <button
               key={tab.key}
               className={cn(
-                'px-3 py-1 rounded-t-lg transition-colors',
+                'px-3 py-1 text-base rounded-t-lg transition-colors',
                 activeTabIndex === index
                   ? 'bg-primary/20 text-primary'
                   : 'text-primary/60 hover:text-primary/80',

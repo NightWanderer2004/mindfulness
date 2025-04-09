@@ -7,8 +7,14 @@ import { resolve } from 'path'
 
 export default defineConfig({
   manifest: {
-    permissions: ['storage'],
+    permissions: ['storage', 'tabs'],
     name: 'Mindful Tab',
+    web_accessible_resources: [
+      {
+        resources: ['entrypoints/**/*', 'assets/**/*'],
+        matches: ['<all_urls>'],
+      },
+    ],
   },
   modules: ['@wxt-dev/module-react'],
   dev: {

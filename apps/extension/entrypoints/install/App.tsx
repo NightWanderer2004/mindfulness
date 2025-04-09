@@ -7,12 +7,7 @@ import { ReminderTypeSelector } from '@repo/ui/components/ui/reminder-type-selec
 import { TransitionPanel } from '@repo/ui/components/ui/transition-panel'
 import { HoldSphere } from '@repo/ui/components/ui/hold-sphere'
 import { motion } from 'framer-motion'
-import {
-  animations,
-  cn,
-  transitionSmooth,
-  appIcons,
-} from '@repo/ui/src/lib/utils'
+import { animations, transitionSmooth, appIcons } from '@repo/ui/src/lib/utils'
 import { useApplicationStore } from '../../src/bg/state'
 
 const steps = [
