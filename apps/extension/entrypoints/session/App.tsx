@@ -5,6 +5,7 @@ import { Modal } from '@repo/ui/components/ui/modal'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
 import { ThemeSoundControls } from '@repo/ui/components/ui/theme-sound-controls'
+import { BreathingSphere } from '@repo/ui/components/ui/breathing-sphere'
 import { appIcons } from '@repo/ui/src/lib/utils'
 type ImageImport = {
   default: string
@@ -363,11 +364,15 @@ const App: React.FC = () => {
     >
       {/* Splash */}
       <motion.div
-        className='absolute inset-0 bg-background pointer-events-none'
+        className='absolute inset-0 z-50 bg-background pointer-events-none'
         initial={{ opacity: 1 }}
         animate={{ opacity: 0 }}
         transition={{ duration: 1, delay: 0.25, ease: 'easeInOut' }}
       />
+
+      <div className='absolute inset-0 flex items-center justify-center'>
+        <BreathingSphere theme={theme} />
+      </div>
 
       <ThemeSoundControls
         theme={theme}

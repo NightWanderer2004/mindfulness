@@ -41,6 +41,7 @@ export const transitionSmooth = {
 export const animations = {
   easing: {
     smooth: [0.19, 1, 0.22, 1],
+    breathing: [0.4, 0, 0.6, 1],
   },
   button: {
     whileHover: {
