@@ -15,6 +15,7 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
 }) => {
   const size = 105
   const blurAmount = 6
+  const raySize = 1
 
   const [isHolding, setIsHolding] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -30,13 +31,13 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
         transition: {
           y: {
             repeat: Infinity,
-            duration: 2.5,
+            duration: 5.5,
             ease: 'easeInOut',
             repeatType: 'loop',
           },
           rotate: {
             repeat: Infinity,
-            duration: 15,
+            duration: 20,
             ease: 'easeInOut',
             repeatType: 'loop',
           },
@@ -49,12 +50,8 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
         transition: { ...transitionSmooth },
       },
     }),
-    [blurAmount],
+    [],
   )
-
-  useEffect(() => {
-    controls.start('float')
-  }, [controls])
 
   useEffect(() => {
     controls.start('float')
@@ -136,6 +133,26 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
       initial='normal'
       animate={controls}
     >
+      {/* Central glow */}
+      <motion.div
+        className='absolute rounded-full bg-orange-50/90'
+        style={{
+          width: size * 0.4,
+          height: size * 0.4,
+          filter: `blur(${blurAmount * 0.6}px)`,
+          zIndex: 10,
+        }}
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: isHolding ? 0.9 + progress * 0.1 : 0.7,
+          scale: isHolding ? 1 + progress * 4.25 : 1,
+        }}
+        transition={{
+          duration: 0.8,
+          ease: animations.easing.smooth,
+        }}
+      />
+
       {/* Outer sphere container */}
       <motion.div
         className='absolute rounded-full border-4 bg-background/[16.5%] border-background/35 shadow-[inset_1.5px_2px_0_2px_rgba(255,251,238,1),inset_-2px_-4px_0_1.5px_rgba(255,255,255,0.75)]'
@@ -143,6 +160,7 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
           width: size,
           height: size,
           filter: `blur(${blurAmount}px)`,
+          zIndex: 2,
         }}
         initial={{ opacity: 0.8, scale: 1 }}
         animate={{
@@ -157,12 +175,13 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
 
       {/* Inner loading sphere (fills up) */}
       <motion.div
-        className='absolute rounded-full bg-background'
+        className='absolute rounded-full bg-[#fff0dc]'
         style={{
           width: size,
           height: size,
           filter: `blur(${blurAmount * 1.75}px)`,
           transformOrigin: 'center',
+          zIndex: 1,
         }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{

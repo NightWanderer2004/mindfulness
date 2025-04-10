@@ -78,6 +78,7 @@ const App: React.FC = () => {
   const [isThemeModalOpen, setIsThemeModalOpen] = useState<boolean>(false)
   const [isSoundModalOpen, setIsSoundModalOpen] = useState<boolean>(false)
   const [currentTrackNumber, setCurrentTrackNumber] = useState<number>(1)
+  const [isAutoChangeEnabled, setIsAutoChangeEnabled] = useState<boolean>(true)
 
   const imageNumberRef = useRef<number>(0)
   const previousThemeRef = useRef<string | null>(null)
@@ -87,6 +88,7 @@ const App: React.FC = () => {
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const backgroundRef = useRef<HTMLDivElement>(null)
+  const autoChangeIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const stopAudioSmoothly = async (audio: HTMLAudioElement): Promise<void> => {
     return new Promise<void>(resolve => {
@@ -163,6 +165,39 @@ const App: React.FC = () => {
       )
     }
   }, [theme])
+
+  useEffect(() => {
+    if (!theme || !isAutoChangeEnabled) return
+
+    const changeBackground = () => {
+      const themeName = theme.toLowerCase() as ThemeType
+      const maxImages = Object.keys(imageMap[themeName] || {}).length
+
+      let nextImageNum = (imageNumberRef.current % maxImages) + 1
+      imageNumberRef.current = nextImageNum
+
+      const imageLoader = imageMap[themeName]?.[nextImageNum]
+
+      if (imageLoader) {
+        imageLoader()
+          .then((module: ImageImport) => {
+            setBackgroundUrl(`url(${module.default})`)
+          })
+          .catch((error: Error) => {
+            console.error('Failed to load image:', error)
+          })
+      }
+    }
+
+    autoChangeIntervalRef.current = setInterval(changeBackground, 90000) // 90 seconds
+
+    return () => {
+      if (autoChangeIntervalRef.current) {
+        clearInterval(autoChangeIntervalRef.current)
+        autoChangeIntervalRef.current = null
+      }
+    }
+  }, [theme, isAutoChangeEnabled])
 
   useEffect(() => {
     if (!theme || !soundType) return
@@ -290,9 +325,10 @@ const App: React.FC = () => {
         backgroundImage: backgroundUrl,
         backgroundPosition: `calc(50% + ${parallaxX}px) calc(50% + ${parallaxY}px)`,
         transition:
-          'background-position 0.1s ease-out, background-image 0.1s ease-out',
+          'background-position 0.1s ease-out, background-image 0.75s ease-out',
       }}
     >
+      {/* Splash */}
       <motion.div
         className='absolute inset-0 bg-background pointer-events-none'
         initial={{ opacity: 1 }}
