@@ -30,6 +30,11 @@ const loadSingleTrack = (soundType: SoundType, theme: ThemeType) => {
   return import(`../../assets/${soundType}/${theme}.mp3`)
 }
 
+// Get random track number between 1 and maxTracks
+const getRandomTrackNumber = (maxTracks = 4) => {
+  return Math.floor(Math.random() * maxTracks) + 1
+}
+
 const imageMap: Record<
   ThemeType,
   Record<number, () => Promise<ImageImport>>
@@ -43,6 +48,7 @@ const imageMap: Record<
     1: () => import('../../assets/wall/wandering-1.png'),
     2: () => import('../../assets/wall/wandering-2.png'),
     3: () => import('../../assets/wall/wandering-3.png'),
+    4: () => import('../../assets/wall/wandering-4.png'),
   },
   openness: {
     1: () => import('../../assets/wall/openness-1.png'),
@@ -58,6 +64,7 @@ const imageMap: Record<
     1: () => import('../../assets/wall/softness-1.png'),
     2: () => import('../../assets/wall/softness-2.png'),
     3: () => import('../../assets/wall/softness-3.png'),
+    4: () => import('../../assets/wall/softness-4.png'),
   },
   tiredness: {
     1: () => import('../../assets/wall/tiredness-1.png'),
@@ -77,7 +84,9 @@ const App: React.FC = () => {
   const [backgroundUrl, setBackgroundUrl] = useState<string>('')
   const [isThemeModalOpen, setIsThemeModalOpen] = useState<boolean>(false)
   const [isSoundModalOpen, setIsSoundModalOpen] = useState<boolean>(false)
-  const [currentTrackNumber, setCurrentTrackNumber] = useState<number>(1)
+  const [currentTrackNumber, setCurrentTrackNumber] = useState<number>(
+    getRandomTrackNumber(),
+  )
   const [isAutoChangeEnabled, setIsAutoChangeEnabled] = useState<boolean>(true)
 
   const imageNumberRef = useRef<number>(0)
@@ -90,23 +99,33 @@ const App: React.FC = () => {
   const backgroundRef = useRef<HTMLDivElement>(null)
   const autoChangeIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const stopAudioSmoothly = async (audio: HTMLAudioElement): Promise<void> => {
+  const stopAudioSmoothly = async (
+    audio: HTMLAudioElement,
+    shouldFade = true,
+  ): Promise<void> => {
     return new Promise<void>(resolve => {
       if (!audio) {
         resolve()
         return
       }
 
-      const fadeOutInterval = setInterval(() => {
-        if (audio.volume > 0.1) {
-          audio.volume -= 0.1
-        } else {
-          clearInterval(fadeOutInterval)
-          audio.pause()
-          audio.currentTime = 0
-          resolve()
-        }
-      }, 50)
+      if (shouldFade) {
+        const fadeOutInterval = setInterval(() => {
+          if (audio.volume > 0.1) {
+            audio.volume -= 0.1
+          } else {
+            clearInterval(fadeOutInterval)
+            audio.pause()
+            audio.currentTime = 0
+            resolve()
+          }
+        }, 50)
+      } else {
+        // Immediately stop without fading
+        audio.pause()
+        audio.currentTime = 0
+        resolve()
+      }
     })
   }
 
@@ -204,19 +223,32 @@ const App: React.FC = () => {
 
     const themeChanged = previousThemeRef.current !== theme
     const soundTypeChanged = previousSoundTypeRef.current !== soundType
+    const currentSoundType = soundType.toLowerCase() as SoundType
 
     previousThemeRef.current = theme
     previousSoundTypeRef.current = soundType
 
     if (themeChanged || soundTypeChanged) {
       if (audioRef.current) {
-        stopAudioSmoothly(audioRef.current).then(() => {
+        // Only use fade effect for ambient sounds
+        const shouldFade = currentSoundType === 'ambient'
+        stopAudioSmoothly(audioRef.current, shouldFade).then(() => {
           audioRef.current = null
-          setCurrentTrackNumber(1)
+          // Start with random track for ambient
+          if (currentSoundType === 'ambient') {
+            setCurrentTrackNumber(getRandomTrackNumber())
+          } else {
+            setCurrentTrackNumber(1)
+          }
           playAudio()
         })
       } else {
-        setCurrentTrackNumber(1)
+        // Start with random track for ambient
+        if (currentSoundType === 'ambient') {
+          setCurrentTrackNumber(getRandomTrackNumber())
+        } else {
+          setCurrentTrackNumber(1)
+        }
         playAudio()
       }
     }
@@ -227,11 +259,12 @@ const App: React.FC = () => {
 
       try {
         if (audioRef.current) {
-          await stopAudioSmoothly(audioRef.current)
+          // Only use fade effect for ambient sounds
+          const shouldFade = currentSoundType === 'ambient'
+          await stopAudioSmoothly(audioRef.current, shouldFade)
         }
 
         const themeName = theme.toLowerCase() as ThemeType
-        const currentSoundType = soundType.toLowerCase() as SoundType
 
         try {
           let audioModule
@@ -248,11 +281,11 @@ const App: React.FC = () => {
 
           if (currentSoundType === 'ambient') {
             newAudio.addEventListener('ended', () => {
-              const nextTrack =
-                currentTrackNumber < 4 ? currentTrackNumber + 1 : 1
+              const nextTrack = getRandomTrackNumber()
               setCurrentTrackNumber(nextTrack)
             })
           } else {
+            // Always loop nature and mono tracks
             newAudio.loop = true
           }
 
@@ -265,9 +298,7 @@ const App: React.FC = () => {
           )
 
           if (currentSoundType === 'ambient') {
-            setCurrentTrackNumber(
-              currentTrackNumber < 4 ? currentTrackNumber + 1 : 1,
-            )
+            setCurrentTrackNumber(getRandomTrackNumber())
           }
         }
       } catch (error) {
@@ -277,11 +308,13 @@ const App: React.FC = () => {
       }
     }
 
-    if (soundType.toLowerCase() === 'ambient') playAudio()
+    playAudio()
 
     return () => {
       if (audioRef.current) {
-        stopAudioSmoothly(audioRef.current)
+        // Only use fade effect for ambient sounds when cleaning up
+        const shouldFade = currentSoundType === 'ambient'
+        stopAudioSmoothly(audioRef.current, shouldFade)
       }
     }
   }, [theme, soundType, currentTrackNumber])
