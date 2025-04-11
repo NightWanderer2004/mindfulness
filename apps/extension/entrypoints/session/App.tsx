@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useApplicationStore, vanillaStore } from '../../src/bg/state'
 import { motion } from 'framer-motion'
 import { Modal } from '@repo/ui/components/ui/modal'
@@ -6,7 +6,9 @@ import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
 import { ThemeSoundControls } from '@repo/ui/components/ui/theme-sound-controls'
 import { BreathingSphere } from '@repo/ui/components/ui/breathing-sphere'
-import { appIcons } from '@repo/ui/src/lib/utils'
+import { FlashScreen } from '@repo/ui/components/ui/flash-screen'
+import { MeditationTimer } from '@repo/ui/components/ui/meditation-timer'
+import { appIcons, cn } from '@repo/ui/src/lib/utils'
 type ImageImport = {
   default: string
 }
@@ -76,9 +78,18 @@ const imageMap: Record<
 
 const movementMultiplier = 0.025
 
+const formatTime = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60)
+  const secs = seconds % 60
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+}
+
 const App: React.FC = () => {
   const theme = useApplicationStore(state => state.theme)
   const soundType = useApplicationStore(state => state.soundType)
+  const meditationTimer =
+    useApplicationStore(state => state.meditationTimer) ?? 10
+
   const setTheme = useApplicationStore(state => state.setTheme)
   const setSoundType = useApplicationStore(state => state.setSoundType)
 
@@ -89,6 +100,8 @@ const App: React.FC = () => {
     getRandomTrackNumber(),
   )
   const [isAutoChangeEnabled, setIsAutoChangeEnabled] = useState<boolean>(true)
+  const [showFlashScreen, setShowFlashScreen] = useState<boolean>(false)
+  const [isBreathingActive, setIsBreathingActive] = useState<boolean>(true)
 
   const imageNumberRef = useRef<number>(0)
   const previousThemeRef = useRef<string | null>(null)
@@ -99,6 +112,41 @@ const App: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const backgroundRef = useRef<HTMLDivElement>(null)
   const autoChangeIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  const handleTimerComplete = useCallback(() => {
+    setShowFlashScreen(true)
+  }, [])
+
+  const handleFlashComplete = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      window.close()
+    }
+  }, [])
+
+  const handlePauseBreathing = useCallback(() => {
+    setIsBreathingActive(false)
+  }, [])
+
+  const handleResumeBreathing = useCallback(() => {
+    setIsBreathingActive(true)
+  }, [])
+
+  const handleFadeAudioNearEnd = useCallback(() => {
+    if (audioRef.current && audioRef.current.volume > 0.1) {
+      // Gradually fade out over 3 seconds
+      const fadeOutInterval = setInterval(() => {
+        if (audioRef.current) {
+          if (audioRef.current.volume > 0.1) {
+            audioRef.current.volume -= 0.1
+          } else {
+            clearInterval(fadeOutInterval)
+          }
+        } else {
+          clearInterval(fadeOutInterval)
+        }
+      }, 300)
+    }
+  }, [])
 
   const stopAudioSmoothly = async (
     audio: HTMLAudioElement,
@@ -122,7 +170,6 @@ const App: React.FC = () => {
           }
         }, 50)
       } else {
-        // Immediately stop without fading
         audio.pause()
         audio.currentTime = 0
         resolve()
@@ -231,11 +278,9 @@ const App: React.FC = () => {
 
     if (themeChanged || soundTypeChanged) {
       if (audioRef.current) {
-        // Only use fade effect for ambient sounds
         const shouldFade = currentSoundType === 'ambient'
         stopAudioSmoothly(audioRef.current, shouldFade).then(() => {
           audioRef.current = null
-          // Start with random track for ambient
           if (currentSoundType === 'ambient') {
             setCurrentTrackNumber(getRandomTrackNumber())
           } else {
@@ -244,7 +289,6 @@ const App: React.FC = () => {
           playAudio()
         })
       } else {
-        // Start with random track for ambient
         if (currentSoundType === 'ambient') {
           setCurrentTrackNumber(getRandomTrackNumber())
         } else {
@@ -260,7 +304,6 @@ const App: React.FC = () => {
 
       try {
         if (audioRef.current) {
-          // Only use fade effect for ambient sounds
           const shouldFade = currentSoundType === 'ambient'
           await stopAudioSmoothly(audioRef.current, shouldFade)
         }
@@ -286,7 +329,6 @@ const App: React.FC = () => {
               setCurrentTrackNumber(nextTrack)
             })
           } else {
-            // Always loop nature and mono tracks
             newAudio.loop = true
           }
 
@@ -313,7 +355,6 @@ const App: React.FC = () => {
 
     return () => {
       if (audioRef.current) {
-        // Only use fade effect for ambient sounds when cleaning up
         const shouldFade = currentSoundType === 'ambient'
         stopAudioSmoothly(audioRef.current, shouldFade)
       }
@@ -354,15 +395,14 @@ const App: React.FC = () => {
   return (
     <div
       ref={backgroundRef}
-      className='overflow-hidden flex min-h-screen flex-col items-center justify-end bg-background bg-no-repeat bg-[100%] lg:bg-[105%]'
+      className='overflow-hidden flex min-h-screen flex-col items-center justify-between bg-background bg-no-repeat bg-[100%] lg:bg-[105%]'
       style={{
         backgroundImage: backgroundUrl,
         backgroundPosition: `calc(50% + ${parallaxX}px) calc(50% + ${parallaxY}px)`,
-        transition:
-          'background-position 0.1s ease-out, background-image 0.75s ease-out',
+        transition: 'background-image 0.75s ease-out',
       }}
     >
-      {/* Splash */}
+      {/* Start splash */}
       <motion.div
         className='absolute inset-0 z-50 bg-background pointer-events-none'
         initial={{ opacity: 1 }}
@@ -371,17 +411,35 @@ const App: React.FC = () => {
       />
 
       <div className='absolute inset-0 flex items-center justify-center'>
-        <BreathingSphere theme={theme} />
+        <BreathingSphere theme={theme} isActive={isBreathingActive} />
       </div>
 
-      <ThemeSoundControls
-        theme={theme}
-        soundType={soundType}
-        getThemeIcon={getThemeIcon}
-        getSoundIcon={getSoundIcon}
-        onThemeClick={() => setIsThemeModalOpen(true)}
-        onSoundClick={() => setIsSoundModalOpen(true)}
+      {/* Flash screen for timer completion */}
+      <FlashScreen
+        isActive={showFlashScreen}
+        onFlashComplete={handleFlashComplete}
+        duration={1500}
       />
+
+      <div className='absolute bottom-0 w-full z-10 flex flex-col items-center'>
+        <MeditationTimer
+          meditationTimer={meditationTimer}
+          theme={theme || undefined}
+          onTimerComplete={handleTimerComplete}
+          onPause={handlePauseBreathing}
+          onResume={handleResumeBreathing}
+          fadeAudioNearEnd={handleFadeAudioNearEnd}
+        />
+
+        <ThemeSoundControls
+          theme={theme}
+          soundType={soundType}
+          getThemeIcon={getThemeIcon}
+          getSoundIcon={getSoundIcon}
+          onThemeClick={() => setIsThemeModalOpen(true)}
+          onSoundClick={() => setIsSoundModalOpen(true)}
+        />
+      </div>
 
       <Modal
         isOpen={isThemeModalOpen}

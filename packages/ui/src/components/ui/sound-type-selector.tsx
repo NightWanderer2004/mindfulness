@@ -8,7 +8,7 @@ interface IconsMap {
 
 interface SoundTypeSelectorProps {
   selectedSoundType: string | null
-  setSelectedSoundType: (soundType: string) => void
+  setSelectedSoundType?: (soundType: string) => void
   icons: IconsMap
 }
 
@@ -52,7 +52,7 @@ export const SoundTypeSelector: React.FC<SoundTypeSelectorProps> = ({
               ? `${soundType.color} shadow-smooth`
               : `border-transparent ${soundType.hover}`,
           )}
-          onClick={() => setSelectedSoundType(soundType.name)}
+          onClick={() => setSelectedSoundType?.(soundType.name)}
         >
           <div
             className={cn(

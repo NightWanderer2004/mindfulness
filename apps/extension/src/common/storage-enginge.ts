@@ -26,5 +26,6 @@ export const clearStorage = async () => {
     theme: '',
     soundType: '',
     reminderType: '',
+    meditationTimer: 10,
   })
 }

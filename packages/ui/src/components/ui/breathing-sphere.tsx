@@ -4,9 +4,11 @@ import { animations, cn } from '../../lib/utils'
 
 interface BreathingSphereProps {
   theme: string | null
+  breathingPattern?: string | null
   className?: string
   size?: number
   scaleMin?: number
+  isActive?: boolean
 }
 
 const themeColors: Record<
@@ -37,13 +39,21 @@ const themeColors: Record<
 
 export const BreathingSphere: React.FC<BreathingSphereProps> = ({
   theme,
+  breathingPattern = 'Equal',
   className,
   size = 40,
   scaleMin = 0.25,
+  isActive = true,
 }) => {
   const themeKey = theme?.toLowerCase() || 'openness'
+  const patternKey = breathingPattern?.toLowerCase() || 'equal'
   const colors =
     themeColors[themeKey as keyof typeof themeColors] || themeColors.openness
+
+  const pattern =
+    animations.breathingPatterns[
+      patternKey as keyof typeof animations.breathingPatterns
+    ] || animations.breathingPatterns.equal
 
   const dimensions = {
     outer: {
@@ -88,38 +98,101 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
     },
   }
 
+  // Create keyframes based on breathing pattern
+  const createBreathingKeyframes = (config: typeof dimensions.outer) => {
+    const { inhale, exhale, hold, holdAfterExhale } = pattern
+    const totalDuration = pattern.duration
+
+    // Calculate time points for animation keyframes (0 to 1 scale)
+    const inhaleFraction = inhale / totalDuration
+    const holdFraction = hold / totalDuration
+    const exhaleFraction = exhale / totalDuration
+    const afterExhaleFraction = holdAfterExhale / totalDuration
+
+    // Accumulate for keyframe positions
+    const inhaleDone = inhaleFraction
+    const holdDone = inhaleDone + holdFraction
+    const exhaleDone = holdDone + exhaleFraction
+    // Last one implicitly goes to 1.0 (afterExhaleDone)
+
+    // Define keyframes based on breathing pattern
+    if (hold > 0 || holdAfterExhale > 0) {
+      // Pattern with holds (e.g. box breathing)
+      return {
+        scale: [
+          config.scaleMin, // Start (exhaled)
+          config.scaleMax, // After inhale
+          config.scaleMax, // After hold
+          config.scaleMin, // After exhale
+          config.scaleMin, // After hold after exhale
+        ],
+        opacity: [
+          config.opacityMin, // Start
+          config.opacityMax, // After inhale
+          config.opacityMax, // After hold
+          config.opacityMin, // After exhale
+          config.opacityMin, // After hold after exhale
+        ],
+        times: [0, inhaleDone, holdDone, exhaleDone, 1],
+      }
+    } else {
+      // Simple inhale/exhale pattern
+      return {
+        scale: [
+          config.scaleMin, // Start (exhaled)
+          config.scaleMax, // After inhale
+          config.scaleMin, // After exhale
+        ],
+        opacity: [
+          config.opacityMin, // Start
+          config.opacityMax, // After inhale
+          config.opacityMin, // After exhale
+        ],
+      }
+    }
+  }
+
   const breathingAnimation = {
     transition: {
       repeat: Infinity,
-      duration: 8,
+      duration: pattern.duration,
       ease: animations.easing.breathing,
     },
   }
 
-  const renderSphere = (config: typeof dimensions.outer) => (
-    <motion.div
-      className={cn(
-        'absolute rounded-full bg-gradient-radial',
-        colors?.gradient || 'from-lime-300 via-lime-200 to-lime-50',
-      )}
-      style={{
-        width: config.size,
-        height: config.size,
-        maxWidth: config.maxSize,
-        maxHeight: config.maxSize,
-        filter: `blur(${config.blur}px)`,
-      }}
-      initial={{ scale: config.scaleMin, opacity: config.opacityMin }}
-      animate={{
-        scale: [config.scaleMin, config.scaleMax, config.scaleMin],
-        opacity: [config.opacityMin, config.opacityMax, config.opacityMin],
-      }}
-      transition={{
-        ...breathingAnimation.transition,
-        delay: config.delay,
-      }}
-    />
-  )
+  const renderSphere = (config: typeof dimensions.outer) => {
+    const keyframes = createBreathingKeyframes(config)
+
+    return (
+      <motion.div
+        className={cn(
+          'absolute rounded-full bg-gradient-radial',
+          colors?.gradient || 'from-lime-300 via-lime-200 to-lime-50',
+        )}
+        style={{
+          width: config.size,
+          height: config.size,
+          maxWidth: config.maxSize,
+          maxHeight: config.maxSize,
+          filter: `blur(${config.blur}px)`,
+        }}
+        initial={{ scale: config.scaleMin, opacity: config.opacityMin }}
+        animate={
+          isActive
+            ? keyframes
+            : { scale: config.scaleMin, opacity: config.opacityMin }
+        }
+        transition={
+          isActive
+            ? {
+                ...breathingAnimation.transition,
+                delay: config.delay,
+              }
+            : { type: 'spring', stiffness: 100, damping: 25, duration: 0.5 }
+        }
+      />
+    )
+  }
 
   return (
     <div

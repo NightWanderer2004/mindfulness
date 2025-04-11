@@ -17,9 +17,13 @@ interface ApplicationState {
   theme: string | null
   soundType: string | null
   reminderType: string | null
+  breathingPattern: string | null
+  meditationTimer: number | null
   setTheme: (theme: string) => void
   setSoundType: (soundType: string) => void
   setReminderType: (reminderType: string) => void
+  setBreathingPattern: (pattern: string) => void
+  setMeditationTimer: (timer: number) => void
   csActions: {
     increment: () => void
   }
@@ -40,11 +44,15 @@ const createVanillaStore = () =>
         theme: '',
         soundType: '',
         reminderType: '',
+        breathingPattern: 'Equal', // Default breathing pattern
+        meditationTimer: 10, // Default to 10 minutes
         setUser: user => set({ user }),
         setLoginStatus: loginStatus => set({ loginStatus }),
         setTheme: theme => set({ theme }),
         setSoundType: soundType => set({ soundType }),
         setReminderType: reminderType => set({ reminderType }),
+        setBreathingPattern: pattern => set({ breathingPattern: pattern }),
+        setMeditationTimer: timer => set({ meditationTimer: timer }),
         csActions: {
           increment: () => {
             console.log('Incremented')
@@ -78,6 +86,8 @@ const createVanillaStore = () =>
           theme: state.theme,
           soundType: state.soundType,
           reminderType: state.reminderType,
+          breathingPattern: state.breathingPattern,
+          meditationTimer: state.meditationTimer,
         }),
       },
     ),
@@ -94,6 +104,10 @@ export const useTheme = () => useApplicationStore(store => store.theme)
 export const useSoundType = () => useApplicationStore(store => store.soundType)
 export const useReminderType = () =>
   useApplicationStore(store => store.reminderType)
+export const useBreathingPattern = () =>
+  useApplicationStore(store => store.breathingPattern)
+export const useMeditationTimer = () =>
+  useApplicationStore(store => store.meditationTimer)
 export const csActions = vanillaStore.getState().csActions
 export const bgActions = vanillaStore.getState().bgActions
 

@@ -8,7 +8,7 @@ interface IconsMap {
 
 interface ThemeSelectorProps {
   selectedTheme: string | null
-  setSelectedTheme: (theme: string) => void
+  setSelectedTheme?: (theme: string) => void
   icons: IconsMap
 }
 
@@ -76,7 +76,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
               ? `${theme.color} shadow-smooth`
               : `border-transparent ${theme.hover}`,
           )}
-          onClick={() => setSelectedTheme(theme.name)}
+          onClick={() => setSelectedTheme?.(theme.name)}
         >
           <div
             className={cn(

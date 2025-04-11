@@ -3,6 +3,11 @@ import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import { MeditateButton } from '@repo/ui/components/ui/meditate-btn'
 import { Modal } from '@repo/ui/components/ui/modal'
 import { TabModal } from '@repo/ui/components/ui/tab-modal'
+import { TimerSelector } from '@repo/ui/components/ui/timer-selector'
+import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
+import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
+import { ReminderTypeSelector } from '@repo/ui/components/ui/reminder-type-selector'
+import { BreathingPatternSelector } from '@repo/ui/components/ui/breathing-pattern-selector'
 import { useApplicationStore } from '../../src/bg/state'
 import ResetButton from '../../src/cs/ResetButton'
 import { appIcons, cn } from '@repo/ui/src/lib/utils'
@@ -15,12 +20,20 @@ const App: React.FC = () => {
   const storedTheme = useApplicationStore(state => state.theme)
   const storedSoundType = useApplicationStore(state => state.soundType)
   const storedReminderType = useApplicationStore(state => state.reminderType)
+  const storedBreathingPattern = useApplicationStore(
+    state => state.breathingPattern,
+  )
+  const storedTimer = useApplicationStore(state => state.meditationTimer)
 
   const setStoredTheme = useApplicationStore(state => state.setTheme)
   const setStoredSoundType = useApplicationStore(state => state.setSoundType)
   const setStoredReminderType = useApplicationStore(
     state => state.setReminderType,
   )
+  const setStoredBreathingPattern = useApplicationStore(
+    state => state.setBreathingPattern,
+  )
+  const setStoredTimer = useApplicationStore(state => state.setMeditationTimer)
 
   const [selectedTheme, setSelectedTheme] = useState<string | null>(storedTheme)
   const [selectedSoundType, setSelectedSoundType] = useState<string | null>(
@@ -29,6 +42,10 @@ const App: React.FC = () => {
   const [selectedReminderType, setSelectedReminderType] = useState<
     string | null
   >(storedReminderType)
+  const [selectedBreathingPattern, setSelectedBreathingPattern] = useState<
+    string | null
+  >(storedBreathingPattern)
+  const [selectedTimer, setSelectedTimer] = useState<number | null>(storedTimer)
 
   useEffect(() => {
     checkSessionStatus()
@@ -88,6 +105,17 @@ const App: React.FC = () => {
     setStoredReminderType(reminderType)
   }
 
+  const handleBreathingPatternSelection = (pattern: string) => {
+    const patternKey = pattern.toLowerCase()
+    setSelectedBreathingPattern(pattern)
+    setStoredBreathingPattern(patternKey)
+  }
+
+  const handleTimerSelection = (timer: number) => {
+    setSelectedTimer(timer)
+    setStoredTimer(timer)
+  }
+
   const handleOpenContentPage = () => {
     if (typeof chrome !== 'undefined' && chrome.tabs && chrome.runtime) {
       chrome.tabs.create(
@@ -98,6 +126,68 @@ const App: React.FC = () => {
       )
     }
   }
+
+  // Конфигурация табов для модального окна тем
+  const themeTabs = [
+    {
+      name: 'Themes',
+      key: 'themes',
+      panel: (
+        <ThemeSelector
+          selectedTheme={selectedTheme}
+          setSelectedTheme={handleThemeSelection}
+          icons={appIcons.themeIcons}
+        />
+      ),
+    },
+    {
+      name: 'Sound',
+      key: 'sound',
+      panel: (
+        <SoundTypeSelector
+          selectedSoundType={selectedSoundType}
+          setSelectedSoundType={handleSoundTypeSelection}
+          icons={appIcons.soundIcons}
+        />
+      ),
+    },
+    {
+      name: 'Reminder',
+      key: 'reminder',
+      panel: (
+        <ReminderTypeSelector
+          selectedReminderType={selectedReminderType}
+          setSelectedReminderType={handleReminderTypeSelection}
+          icons={appIcons.reminderIcons}
+        />
+      ),
+    },
+  ]
+
+  // Конфигурация табов для модального окна настроек
+  const settingsTabs = [
+    {
+      name: 'Timer',
+      key: 'timer',
+      panel: (
+        <TimerSelector
+          selectedTimer={selectedTimer}
+          setSelectedTimer={handleTimerSelection}
+          icons={appIcons.utility}
+        />
+      ),
+    },
+    {
+      name: 'Breathing',
+      key: 'breathing',
+      panel: (
+        <BreathingPatternSelector
+          selectedPattern={selectedBreathingPattern}
+          setSelectedPattern={handleBreathingPatternSelection}
+        />
+      ),
+    },
+  ]
 
   return (
     <div className='relative w-[330px] py-7 px-11 overflow-hidden flex flex-col items-center justify-center text-white'>
@@ -141,22 +231,14 @@ const App: React.FC = () => {
       <TabModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        selectedTheme={selectedTheme}
-        selectedSoundType={selectedSoundType}
-        selectedReminderType={selectedReminderType}
-        handleThemeSelection={handleThemeSelection}
-        handleSoundTypeSelection={handleSoundTypeSelection}
-        handleReminderTypeSelection={handleReminderTypeSelection}
+        tabs={themeTabs}
       />
 
-      <Modal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)}>
-        <div className='text-text-primary p-4 border-2 border-orange-600/20 rounded-lg'>
-          <p className='text-sm text-primary/70 mb-4'>
-            Reset all data and return to default settings
-          </p>
-          <ResetButton label='Reset All Data' className='w-full' />
-        </div>
-      </Modal>
+      <TabModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        tabs={settingsTabs}
+      />
     </div>
   )
 }

@@ -290,6 +290,33 @@ const App: React.FC = () => {
   return (
     <div className='h-screen relative flex flex-col items-center justify-center pb-20 text-center text-primary overflow-hidden'>
       <div className='absolute inset-0 bg-sky-bg-main bg-cover bg-center bg-no-repeat blur-sm scale-105 pointer-events-none brightness-110 z-0' />
+
+      <div
+        className={`fixed top-2.5 right-[52px] flex flex-col gap-1 items-center z-50 transition-opacity duration-300 ${activeIndex === 3 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      >
+        <svg
+          width='24'
+          height='24'
+          viewBox='0 0 24 24'
+          fill='none'
+          xmlns='http://www.w3.org/2000/svg'
+          className='text-background/85'
+        >
+          <path
+            d='M12 4L12 20M12 4L6 10M12 4L18 10'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+          />
+        </svg>
+        <span className='text-sm font-semibold text-background/85 text-center whitespace-nowrap'>
+          Pin this extension
+          <br />
+          to the toolbar
+        </span>
+      </div>
+
       <motion.div
         initial={{ y: 12, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

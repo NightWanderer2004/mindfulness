@@ -71,6 +71,37 @@ export const animations = {
       ...transitionSmooth,
     },
   },
+
+  breathingPatterns: {
+    equal: {
+      duration: 8,
+      inhale: 4,
+      exhale: 4,
+      hold: 0,
+      holdAfterExhale: 0,
+    },
+    relaxing: {
+      duration: 19,
+      inhale: 4,
+      exhale: 8,
+      hold: 7,
+      holdAfterExhale: 0,
+    },
+    square: {
+      duration: 16,
+      inhale: 4,
+      exhale: 4,
+      hold: 4,
+      holdAfterExhale: 4,
+    },
+    calming: {
+      duration: 18,
+      inhale: 6,
+      exhale: 9,
+      hold: 3,
+      holdAfterExhale: 0,
+    },
+  },
 }
 
 export const appIcons = {

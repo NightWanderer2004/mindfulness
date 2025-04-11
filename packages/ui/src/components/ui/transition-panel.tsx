@@ -1,15 +1,15 @@
-"use client"
+'use client'
 import {
   AnimatePresence,
   Transition,
   Variant,
   motion,
-  MotionProps
-} from "framer-motion"
-import { cn } from "../../lib/utils"
+  MotionProps,
+} from 'framer-motion'
+import { cn } from '../../lib/utils'
 
 export type TransitionPanelProps = {
-  children: React.ReactNode[]
+  children: React.ReactNode[] | any
   className?: string
   transition?: Transition
   activeIndex: number
@@ -25,19 +25,21 @@ export function TransitionPanel({
   ...motionProps
 }: TransitionPanelProps) {
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn('relative', className)}>
       <AnimatePresence
         initial={false}
-        mode="popLayout"
-        custom={motionProps.custom}>
+        mode='popLayout'
+        custom={motionProps.custom}
+      >
         <motion.div
           key={activeIndex}
           variants={variants}
           transition={transition}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          {...motionProps}>
+          initial='enter'
+          animate='center'
+          exit='exit'
+          {...motionProps}
+        >
           {children[activeIndex]}
         </motion.div>
       </AnimatePresence>

@@ -8,7 +8,7 @@ interface IconsMap {
 
 interface ReminderTypeSelectorProps {
   selectedReminderType: string | null
-  setSelectedReminderType: (reminderType: string) => void
+  setSelectedReminderType?: (reminderType: string) => void
   icons: IconsMap
 }
 
@@ -46,7 +46,7 @@ export const ReminderTypeSelector: React.FC<ReminderTypeSelectorProps> = ({
               ? `${reminderType.color} shadow-smooth`
               : `border-transparent ${reminderType.hover}`,
           )}
-          onClick={() => setSelectedReminderType(reminderType.name)}
+          onClick={() => setSelectedReminderType?.(reminderType.name)}
         >
           <div
             className={cn(
