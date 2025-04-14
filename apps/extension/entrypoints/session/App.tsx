@@ -5,6 +5,7 @@ import { Modal } from '@repo/ui/components/ui/modal'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
 import { ThemeSoundControls } from '@repo/ui/components/ui/theme-sound-controls'
+import { BreathingLight } from '@repo/ui/components/ui/breathing-light'
 import { BreathingSphere } from '@repo/ui/components/ui/breathing-sphere'
 import { FlashScreen } from '@repo/ui/components/ui/flash-screen'
 import { MeditationTimer } from '@repo/ui/components/ui/meditation-timer'
@@ -87,6 +88,8 @@ const formatTime = (seconds: number): string => {
 const App: React.FC = () => {
   const theme = useApplicationStore(state => state.theme)
   const soundType = useApplicationStore(state => state.soundType)
+  const sphereType = useApplicationStore(state => state.sphereType)
+  const breathingPattern = useApplicationStore(state => state.breathingPattern)
   const meditationTimer =
     useApplicationStore(state => state.meditationTimer) ?? 10
 
@@ -205,6 +208,11 @@ const App: React.FC = () => {
     if (!soundType) {
       const store = vanillaStore.getState()
       vanillaStore.setState({ ...store, soundType: 'Ambient' })
+    }
+
+    if (!sphereType) {
+      const store = vanillaStore.getState()
+      vanillaStore.setState({ ...store, sphereType: 'Light' })
     }
   }, [])
 
@@ -395,7 +403,7 @@ const App: React.FC = () => {
   return (
     <div
       ref={backgroundRef}
-      className='overflow-hidden flex min-h-screen flex-col items-center justify-between bg-background bg-no-repeat bg-[100%] lg:bg-[105%]'
+      className='overflow-hidden flex min-h-screen flex-col items-center justify-between bg-background bg-no-repeat bg-cover'
       style={{
         backgroundImage: backgroundUrl,
         backgroundPosition: `calc(50% + ${parallaxX}px) calc(50% + ${parallaxY}px)`,
@@ -411,7 +419,19 @@ const App: React.FC = () => {
       />
 
       <div className='absolute inset-0 flex items-center justify-center'>
-        <BreathingSphere theme={theme} isActive={isBreathingActive} />
+        {sphereType?.toLowerCase() === 'zen' ? (
+          <BreathingSphere
+            theme={theme}
+            breathingPattern={breathingPattern}
+            isActive={isBreathingActive}
+          />
+        ) : (
+          <BreathingLight
+            theme={theme}
+            breathingPattern={breathingPattern}
+            isActive={isBreathingActive}
+          />
+        )}
       </div>
 
       {/* Flash screen for timer completion */}
@@ -422,14 +442,14 @@ const App: React.FC = () => {
       />
 
       <div className='absolute bottom-0 w-full z-10 flex flex-col items-center'>
-        <MeditationTimer
+        {/* <MeditationTimer
           meditationTimer={meditationTimer}
           theme={theme || undefined}
           onTimerComplete={handleTimerComplete}
           onPause={handlePauseBreathing}
           onResume={handleResumeBreathing}
           fadeAudioNearEnd={handleFadeAudioNearEnd}
-        />
+        /> */}
 
         <ThemeSoundControls
           theme={theme}

@@ -15,22 +15,24 @@ export const TimerSelector: React.FC<TimerSelectorProps> = ({
   setSelectedTimer,
   icons,
 }) => {
-  const predefinedTimers = [2, 5, 8, 10, 12, 15]
+  const predefinedTimers = [2, 4, 6, 8]
 
   return (
-    <div className='flex flex-wrap gap-2 justify-center'>
+    <div className='grid grid-cols-2 gap-2 justify-center'>
       {predefinedTimers.map(timer => (
         <button
           key={timer}
           onClick={() => setSelectedTimer(timer)}
           className={cn(
-            'flex items-center justify-center px-4 py-2 text-base rounded-lg transition-colors',
+            'p-1.5 rounded-xl border-2 transition-colors duration-200 w-full',
             selectedTimer === timer
-              ? 'bg-primary/20 text-primary font-medium'
-              : 'text-primary/60 hover:text-primary/80 hover:bg-primary/10',
+              ? 'border-primary/30 bg-primary/10 shadow-sm'
+              : 'border-transparent hover:bg-primary/5',
           )}
         >
-          {timer} min
+          <span className={cn('text-base font-medium text-primary/90')}>
+            {timer} min
+          </span>
         </button>
       ))}
     </div>

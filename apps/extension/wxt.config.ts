@@ -7,7 +7,8 @@ import { resolve } from 'path'
 
 export default defineConfig({
   manifest: {
-    permissions: ['storage', 'tabs'],
+    permissions: ['storage', 'tabs', 'alarms', 'scripting'],
+    host_permissions: ['<all_urls>'],
     name: 'Mindful Tab',
     web_accessible_resources: [
       {

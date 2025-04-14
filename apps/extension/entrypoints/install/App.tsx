@@ -3,7 +3,7 @@ import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import { Modal } from '@repo/ui/components/ui/modal'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
-import { ReminderTypeSelector } from '@repo/ui/components/ui/reminder-type-selector'
+import { SphereSelector } from '@repo/ui/components/ui/sphere-selector'
 import { TransitionPanel } from '@repo/ui/components/ui/transition-panel'
 import { HoldSphere } from '@repo/ui/components/ui/hold-sphere'
 import { motion } from 'framer-motion'
@@ -18,32 +18,32 @@ const steps = [
     description: 'Next, had better to choose sound type',
   },
   {
-    description: 'And the last step is reminder type',
+    description: 'And the last step is sphere type',
   },
   {
     description:
-      'All set! To start using the extension, click the icon in the browser toolbar and open the pop-up. Hold «space» to finish.',
+      'All set! Wish you a great experience further. Hold «space» to finish.',
   },
 ]
 
 const App: React.FC = () => {
   const theme = useApplicationStore(state => state.theme)
   const soundType = useApplicationStore(state => state.soundType)
-  const reminderType = useApplicationStore(state => state.reminderType)
+  const sphereType = useApplicationStore(state => state.sphereType)
   const setTheme = useApplicationStore(state => state.setTheme)
   const setSoundType = useApplicationStore(state => state.setSoundType)
-  const setReminderType = useApplicationStore(state => state.setReminderType)
+  const setSphereType = useApplicationStore(state => state.setSphereType)
 
   const [selectedTheme, setSelectedTheme] = useState<string | null>(theme)
   const [selectedSoundType, setSelectedSoundType] = useState<string | null>(
     soundType,
   )
-  const [selectedReminderType, setSelectedReminderType] = useState<
-    string | null
-  >(reminderType)
+  const [selectedSphereType, setSelectedSphereType] = useState<string | null>(
+    sphereType,
+  )
   const [isThemeModalOpen, setIsThemeModalOpen] = useState<boolean>(false)
   const [isSoundModalOpen, setIsSoundModalOpen] = useState<boolean>(false)
-  const [isReminderModalOpen, setIsReminderModalOpen] = useState<boolean>(false)
+  const [isSphereModalOpen, setIsSphereModalOpen] = useState<boolean>(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   const [setupComplete, setSetupComplete] = useState(false)
@@ -67,11 +67,11 @@ const App: React.FC = () => {
   }, [selectedSoundType])
 
   useEffect(() => {
-    if (selectedReminderType && activeIndex === 2) {
+    if (selectedSphereType && activeIndex === 2) {
       setDirection(1)
       setActiveIndex(3)
     }
-  }, [selectedReminderType])
+  }, [selectedSphereType])
 
   useEffect(() => {
     if (setupComplete && activeIndex === 3) {
@@ -96,7 +96,7 @@ const App: React.FC = () => {
       } else if (currentStep === 1 && selectedSoundType) {
         setDirection(1)
         setActiveIndex(2)
-      } else if (currentStep === 2 && selectedReminderType) {
+      } else if (currentStep === 2 && selectedSphereType) {
         setDirection(1)
         setActiveIndex(3)
       }
@@ -137,12 +137,12 @@ const App: React.FC = () => {
     )
   }
 
-  const getReminderIcon = () => {
-    if (!selectedReminderType) return appIcons.utility.themes // Using themes as a default icon
-    const reminderKey = selectedReminderType.toLowerCase()
+  const getSphereIcon = () => {
+    if (!selectedSphereType) return appIcons.utility.themes // Using themes as a default icon
+    const sphereKey = selectedSphereType.toLowerCase()
     return (
       appIcons.reminderIcons[
-        reminderKey as keyof typeof appIcons.reminderIcons
+        sphereKey as keyof typeof appIcons.reminderIcons
       ] || appIcons.utility.themes
     )
   }
@@ -157,15 +157,15 @@ const App: React.FC = () => {
     setSoundType(soundType)
   }
 
-  const handleReminderTypeSelection = (reminderType: string) => {
-    setSelectedReminderType(reminderType)
-    setReminderType(reminderType)
+  const handleSphereTypeSelection = (sphereType: string) => {
+    setSelectedSphereType(sphereType)
+    setSphereType(sphereType)
   }
 
   const canProceed =
     (activeIndex === 0 && selectedTheme) ||
     (activeIndex === 1 && selectedSoundType) ||
-    (activeIndex === 2 && selectedReminderType)
+    (activeIndex === 2 && selectedSphereType)
 
   const contentVariants = {
     enter: (direction: number) => ({
@@ -201,7 +201,7 @@ const App: React.FC = () => {
 
       {(activeIndex === 0 && selectedTheme) ||
       (activeIndex === 1 && selectedSoundType) ||
-      (activeIndex === 2 && selectedReminderType) ? (
+      (activeIndex === 2 && selectedSphereType) ? (
         <motion.button
           whileHover={animations.button.whileHover}
           whileTap={animations.button.whileTap}
@@ -235,13 +235,13 @@ const App: React.FC = () => {
         onClick: () => setIsSoundModalOpen(true),
       },
       {
-        key: 'reminder',
+        key: 'sphere',
         description: steps[2]?.description,
-        label: selectedReminderType
-          ? `Reminder: ${selectedReminderType}`
-          : 'Choose Reminder',
-        icon: getReminderIcon(),
-        onClick: () => setIsReminderModalOpen(true),
+        label: selectedSphereType
+          ? `Sphere: ${selectedSphereType}`
+          : 'Choose Sphere',
+        icon: getSphereIcon(),
+        onClick: () => setIsSphereModalOpen(true),
       },
       {
         key: 'complete',
@@ -391,22 +391,22 @@ const App: React.FC = () => {
       </Modal>
 
       <Modal
-        isOpen={isReminderModalOpen}
-        onClose={() => setIsReminderModalOpen(false)}
+        isOpen={isSphereModalOpen}
+        onClose={() => setIsSphereModalOpen(false)}
       >
         <div className='mb-6'>
           <h2 className='text-3xl font-medium mb-1.5 bg-gradient-to-br from-primary/70 via-primary to-primary bg-clip-text text-transparent bg-[length:200%_200%] bg-[position:0%_0%]'>
-            Choose Your Reminder
+            Choose Your Sphere
           </h2>
           <p className='text-base text-primary/85'>
-            Select a reminder type that will appear on sites
+            Select a sphere type for your meditation
           </p>
         </div>
-        <ReminderTypeSelector
-          selectedReminderType={selectedReminderType}
-          setSelectedReminderType={reminderType => {
-            handleReminderTypeSelection(reminderType)
-            setIsReminderModalOpen(false)
+        <SphereSelector
+          selectedSphereType={selectedSphereType}
+          setSelectedSphereType={sphereType => {
+            handleSphereTypeSelection(sphereType)
+            setIsSphereModalOpen(false)
           }}
           icons={appIcons.reminderIcons}
         />

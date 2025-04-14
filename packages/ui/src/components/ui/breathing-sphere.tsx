@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { animations, cn } from '../../lib/utils'
+import { animations, cn, themeColorsGradient } from '../../lib/utils'
 
 interface BreathingSphereProps {
   theme: string | null
@@ -9,32 +9,6 @@ interface BreathingSphereProps {
   size?: number
   scaleMin?: number
   isActive?: boolean
-}
-
-const themeColors: Record<
-  string,
-  {
-    gradient: string
-  }
-> = {
-  harmony: {
-    gradient: 'from-amber-300 via-amber-200 to-amber-50',
-  },
-  wandering: {
-    gradient: 'from-blue-400 via-blue-300 to-blue-100',
-  },
-  openness: {
-    gradient: 'from-lime-300 via-lime-200 to-lime-50',
-  },
-  confidence: {
-    gradient: 'from-emerald-300 via-emerald-200 to-emerald-50',
-  },
-  softness: {
-    gradient: 'from-sky-300 via-sky-200 to-sky-50',
-  },
-  tiredness: {
-    gradient: 'from-red-300 via-red-200 to-red-50',
-  },
 }
 
 export const BreathingSphere: React.FC<BreathingSphereProps> = ({
@@ -48,7 +22,8 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
   const themeKey = theme?.toLowerCase() || 'openness'
   const patternKey = breathingPattern?.toLowerCase() || 'equal'
   const colors =
-    themeColors[themeKey as keyof typeof themeColors] || themeColors.openness
+    themeColorsGradient[themeKey as keyof typeof themeColorsGradient] ||
+    themeColorsGradient.openness
 
   const pattern =
     animations.breathingPatterns[

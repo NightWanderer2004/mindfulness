@@ -16,12 +16,13 @@ interface ApplicationState {
   count: number
   theme: string | null
   soundType: string | null
-  reminderType: string | null
+  sphereType: string | null
+  reminderType?: string | null
   breathingPattern: string | null
   meditationTimer: number | null
   setTheme: (theme: string) => void
   setSoundType: (soundType: string) => void
-  setReminderType: (reminderType: string) => void
+  setSphereType: (sphereType: string) => void
   setBreathingPattern: (pattern: string) => void
   setMeditationTimer: (timer: number) => void
   csActions: {
@@ -31,6 +32,14 @@ interface ApplicationState {
     refreshData: () => Promise<void>
     resetStorage: () => Promise<void>
   }
+}
+
+const migrateState = (state: any): any => {
+  if (state.reminderType && !state.sphereType) {
+    state.sphereType = state.reminderType
+  }
+
+  return state
 }
 
 const createVanillaStore = () =>
@@ -43,14 +52,14 @@ const createVanillaStore = () =>
         loginStatus: 'idle',
         theme: '',
         soundType: '',
-        reminderType: '',
-        breathingPattern: 'Equal', // Default breathing pattern
-        meditationTimer: 10, // Default to 10 minutes
+        sphereType: '',
+        breathingPattern: 'Equal',
+        meditationTimer: 10,
         setUser: user => set({ user }),
         setLoginStatus: loginStatus => set({ loginStatus }),
         setTheme: theme => set({ theme }),
         setSoundType: soundType => set({ soundType }),
-        setReminderType: reminderType => set({ reminderType }),
+        setSphereType: sphereType => set({ sphereType }),
         setBreathingPattern: pattern => set({ breathingPattern: pattern }),
         setMeditationTimer: timer => set({ meditationTimer: timer }),
         csActions: {
@@ -62,9 +71,6 @@ const createVanillaStore = () =>
         },
         bgActions: {
           refreshData: async () => {
-            // Run in background,
-            // Save result to state
-            // Front end / Content Script automatically updates
             const service = getExampleService()
             const secret = await service.doSomething()
             set({ secretText: secret })
@@ -85,10 +91,11 @@ const createVanillaStore = () =>
           loginStatus: state.loginStatus,
           theme: state.theme,
           soundType: state.soundType,
-          reminderType: state.reminderType,
+          sphereType: state.sphereType,
           breathingPattern: state.breathingPattern,
           meditationTimer: state.meditationTimer,
         }),
+        migrate: migrateState,
       },
     ),
   )
@@ -102,8 +109,8 @@ export const useSecret = () => useApplicationStore(store => store.secretText)
 export const useCount = () => useApplicationStore(store => store.count)
 export const useTheme = () => useApplicationStore(store => store.theme)
 export const useSoundType = () => useApplicationStore(store => store.soundType)
-export const useReminderType = () =>
-  useApplicationStore(store => store.reminderType)
+export const useSphereType = () =>
+  useApplicationStore(store => store.sphereType)
 export const useBreathingPattern = () =>
   useApplicationStore(store => store.breathingPattern)
 export const useMeditationTimer = () =>

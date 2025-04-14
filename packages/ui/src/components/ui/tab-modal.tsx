@@ -105,7 +105,7 @@ export const TabModal: React.FC<TabModalProps> = ({
               className={cn(
                 'px-3 py-1 text-base rounded-t-lg transition-colors',
                 activeTabIndex === index
-                  ? 'bg-primary/20 text-primary'
+                  ? 'bg-primary/10 text-primary'
                   : 'text-primary/60 hover:text-primary/80',
               )}
               onClick={() => setActiveTabIndex(index)}
@@ -118,9 +118,6 @@ export const TabModal: React.FC<TabModalProps> = ({
         <motion.div
           layout='position'
           className='relative '
-          initial={{
-            height: 144,
-          }}
           animate={{
             height: panelBounds.height,
           }}
@@ -137,28 +134,16 @@ export const TabModal: React.FC<TabModalProps> = ({
             }}
             variants={{
               enter: {
-                x: 20,
+                x: 65,
                 opacity: 0,
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
               },
               center: {
                 x: 0,
                 opacity: 1,
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
               },
               exit: {
-                x: -20,
+                x: -65,
                 opacity: 0,
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
               },
             }}
           >

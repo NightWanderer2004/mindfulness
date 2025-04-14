@@ -39,7 +39,7 @@ export const BreathingPatternSelector: React.FC<
             whileTap={animations.button.whileTap}
             transition={animations.button.transition}
             className={cn(
-              'p-3 rounded-xl border transition-colors duration-200 w-full',
+              'p-1.5 rounded-xl border-2 transition-colors duration-200 w-full',
               selectedPattern === pattern.name
                 ? 'border-primary/30 bg-primary/10 shadow-sm'
                 : 'border-transparent hover:bg-primary/5',

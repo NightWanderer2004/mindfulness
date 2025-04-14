@@ -1,37 +1,50 @@
-import React, { useEffect } from "react"
-import { BaseApp } from "./Base"
-import "@repo/ui/styles.css"
+import React, { useEffect } from 'react'
+import { BaseApp } from './Base'
+import '@repo/ui/styles.css'
 
 interface WithAppProvidersProps {
   container: HTMLElement
 }
 
-export const UI_SELECTOR = "repo-ui"
+export const UI_SELECTOR = 'repo-ui'
 
 export function withAppProviders<P extends object>(
-  WrappedComponent: React.ComponentType<P>
+  WrappedComponent: React.ComponentType<P>,
 ) {
   return function AppProviders(props: P & WithAppProvidersProps) {
     const { container, ...rest } = props
 
     useEffect(() => {
-      const repoUI = document.querySelector(UI_SELECTOR)
-      if (!repoUI || !(repoUI.shadowRoot instanceof ShadowRoot)) {
-        console.error("Could not find longlist-ui element or its ShadowRoot")
+      console.log('withAppProviders hook running')
+      // We need to find the shadow root containing our element
+      const shadowHost =
+        document.querySelector(`.${UI_SELECTOR}`) ||
+        document.querySelector(`#${UI_SELECTOR}`)
+
+      if (!shadowHost || !(shadowHost.shadowRoot instanceof ShadowRoot)) {
+        console.error(
+          `Could not find ${UI_SELECTOR} element or its ShadowRoot`,
+          shadowHost,
+        )
         return
       }
 
-      const shadowRoot = repoUI.shadowRoot
-      const linkElement = document.createElement("link")
-      linkElement.setAttribute("rel", "stylesheet")
+      console.log('Found shadow root:', shadowHost.shadowRoot)
 
-      linkElement.setAttribute("href", "/content.css")
+      // Add stylesheet to shadow root if needed
+      const shadowRoot = shadowHost.shadowRoot
+      const existingLink = shadowRoot.querySelector('link[href="/content.css"]')
 
-      const shadowHead = shadowRoot.querySelector("head")
-      if (shadowHead) {
-        shadowHead.appendChild(linkElement)
+      if (!existingLink) {
+        const linkElement = document.createElement('link')
+        linkElement.setAttribute('rel', 'stylesheet')
+        linkElement.setAttribute('href', '/content.css')
+
+        // Append to shadow root directly or to head if it exists
+        shadowRoot.appendChild(linkElement)
+
         return () => {
-          shadowHead.removeChild(linkElement)
+          shadowRoot.removeChild(linkElement)
         }
       }
     }, [])

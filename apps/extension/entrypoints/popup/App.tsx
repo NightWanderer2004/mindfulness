@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import { MeditateButton } from '@repo/ui/components/ui/meditate-btn'
-import { Modal } from '@repo/ui/components/ui/modal'
 import { TabModal } from '@repo/ui/components/ui/tab-modal'
 import { TimerSelector } from '@repo/ui/components/ui/timer-selector'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
-import { ReminderTypeSelector } from '@repo/ui/components/ui/reminder-type-selector'
+import { SphereSelector } from '@repo/ui/components/ui/sphere-selector'
 import { BreathingPatternSelector } from '@repo/ui/components/ui/breathing-pattern-selector'
 import { useApplicationStore } from '../../src/bg/state'
-import ResetButton from '../../src/cs/ResetButton'
 import { appIcons, cn } from '@repo/ui/src/lib/utils'
 
 const App: React.FC = () => {
@@ -19,7 +17,7 @@ const App: React.FC = () => {
 
   const storedTheme = useApplicationStore(state => state.theme)
   const storedSoundType = useApplicationStore(state => state.soundType)
-  const storedReminderType = useApplicationStore(state => state.reminderType)
+  const storedSphereType = useApplicationStore(state => state.sphereType)
   const storedBreathingPattern = useApplicationStore(
     state => state.breathingPattern,
   )
@@ -27,9 +25,7 @@ const App: React.FC = () => {
 
   const setStoredTheme = useApplicationStore(state => state.setTheme)
   const setStoredSoundType = useApplicationStore(state => state.setSoundType)
-  const setStoredReminderType = useApplicationStore(
-    state => state.setReminderType,
-  )
+  const setStoredSphereType = useApplicationStore(state => state.setSphereType)
   const setStoredBreathingPattern = useApplicationStore(
     state => state.setBreathingPattern,
   )
@@ -39,9 +35,9 @@ const App: React.FC = () => {
   const [selectedSoundType, setSelectedSoundType] = useState<string | null>(
     storedSoundType,
   )
-  const [selectedReminderType, setSelectedReminderType] = useState<
-    string | null
-  >(storedReminderType)
+  const [selectedSphereType, setSelectedSphereType] = useState<string | null>(
+    storedSphereType,
+  )
   const [selectedBreathingPattern, setSelectedBreathingPattern] = useState<
     string | null
   >(storedBreathingPattern)
@@ -71,25 +67,6 @@ const App: React.FC = () => {
     )
   }
 
-  const getSoundIcon = () => {
-    if (!selectedSoundType) return appIcons.utility.sound
-    const soundKey = selectedSoundType.toLowerCase()
-    return (
-      appIcons.soundIcons[soundKey as keyof typeof appIcons.soundIcons] ||
-      appIcons.utility.sound
-    )
-  }
-
-  const getReminderIcon = () => {
-    if (!selectedReminderType) return appIcons.utility.themes
-    const reminderKey = selectedReminderType.toLowerCase()
-    return (
-      appIcons.reminderIcons[
-        reminderKey as keyof typeof appIcons.reminderIcons
-      ] || appIcons.utility.themes
-    )
-  }
-
   const handleThemeSelection = (theme: string) => {
     setSelectedTheme(theme)
     setStoredTheme(theme)
@@ -100,15 +77,14 @@ const App: React.FC = () => {
     setStoredSoundType(soundType)
   }
 
-  const handleReminderTypeSelection = (reminderType: string) => {
-    setSelectedReminderType(reminderType)
-    setStoredReminderType(reminderType)
+  const handleSphereTypeSelection = (sphereType: string) => {
+    setSelectedSphereType(sphereType)
+    setStoredSphereType(sphereType)
   }
 
   const handleBreathingPatternSelection = (pattern: string) => {
-    const patternKey = pattern.toLowerCase()
     setSelectedBreathingPattern(pattern)
-    setStoredBreathingPattern(patternKey)
+    setStoredBreathingPattern(pattern)
   }
 
   const handleTimerSelection = (timer: number) => {
@@ -127,11 +103,10 @@ const App: React.FC = () => {
     }
   }
 
-  // Конфигурация табов для модального окна тем
   const themeTabs = [
     {
-      name: 'Themes',
-      key: 'themes',
+      name: 'Theme',
+      key: 'theme',
       panel: (
         <ThemeSelector
           selectedTheme={selectedTheme}
@@ -152,19 +127,18 @@ const App: React.FC = () => {
       ),
     },
     {
-      name: 'Reminder',
-      key: 'reminder',
+      name: 'Sphere',
+      key: 'sphere',
       panel: (
-        <ReminderTypeSelector
-          selectedReminderType={selectedReminderType}
-          setSelectedReminderType={handleReminderTypeSelection}
+        <SphereSelector
+          selectedSphereType={selectedSphereType}
+          setSelectedSphereType={handleSphereTypeSelection}
           icons={appIcons.reminderIcons}
         />
       ),
     },
   ]
 
-  // Конфигурация табов для модального окна настроек
   const settingsTabs = [
     {
       name: 'Timer',
