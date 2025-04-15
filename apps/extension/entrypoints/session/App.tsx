@@ -5,11 +5,10 @@ import { Modal } from '@repo/ui/components/ui/modal'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
 import { ThemeSoundControls } from '@repo/ui/components/ui/theme-sound-controls'
-import { BreathingLight } from '@repo/ui/components/ui/breathing-light'
 import { BreathingSphere } from '@repo/ui/components/ui/breathing-sphere'
 import { FlashScreen } from '@repo/ui/components/ui/flash-screen'
 import { MeditationTimer } from '@repo/ui/components/ui/meditation-timer'
-import { appIcons, cn } from '@repo/ui/src/lib/utils'
+import { appIcons } from '@repo/ui/src/lib/utils'
 type ImageImport = {
   default: string
 }
@@ -419,19 +418,11 @@ const App: React.FC = () => {
       />
 
       <div className='absolute inset-0 flex items-center justify-center'>
-        {sphereType?.toLowerCase() === 'zen' ? (
-          <BreathingSphere
-            theme={theme}
-            breathingPattern={breathingPattern}
-            isActive={isBreathingActive}
-          />
-        ) : (
-          <BreathingLight
-            theme={theme}
-            breathingPattern={breathingPattern}
-            isActive={isBreathingActive}
-          />
-        )}
+        <BreathingSphere
+          theme={theme}
+          breathingPattern={breathingPattern}
+          isActive={isBreathingActive}
+        />
       </div>
 
       {/* Flash screen for timer completion */}
@@ -442,14 +433,14 @@ const App: React.FC = () => {
       />
 
       <div className='absolute bottom-0 w-full z-10 flex flex-col items-center'>
-        {/* <MeditationTimer
+        <MeditationTimer
           meditationTimer={meditationTimer}
           theme={theme || undefined}
           onTimerComplete={handleTimerComplete}
           onPause={handlePauseBreathing}
           onResume={handleResumeBreathing}
           fadeAudioNearEnd={handleFadeAudioNearEnd}
-        /> */}
+        />
 
         <ThemeSoundControls
           theme={theme}

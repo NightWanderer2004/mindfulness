@@ -52,7 +52,7 @@ const createVanillaStore = () =>
         loginStatus: 'idle',
         theme: '',
         soundType: '',
-        sphereType: '',
+        sphereType: 'zen',
         breathingPattern: 'Equal',
         meditationTimer: 10,
         setUser: user => set({ user }),

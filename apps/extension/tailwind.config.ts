@@ -23,9 +23,20 @@ const config: Pick<Config, 'content' | 'presets' | 'important' | 'theme'> = {
       fontFamily: {
         sans: ['DM Sans', 'sans-serif'],
       },
+      animation: {
+        'gradient-x': 'gradient-x 8s linear infinite',
+      },
+      keyframes: {
+        'gradient-x': {
+          '0%, 100%': { backgroundPosition: '0% 10%' },
+          '50%': { backgroundPosition: '100% 100%' },
+        },
+      },
       backgroundImage: {
         'sky-bg-popup': "url('/assets/popup-bg.png')",
         'sky-bg-main': "url('/assets/main-bg.png')",
+        'new-tab': "url('/assets/newtab-bg.png')",
+        'new-tab-evening': "url('/assets/newtab-bg-evening.png')",
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
     },

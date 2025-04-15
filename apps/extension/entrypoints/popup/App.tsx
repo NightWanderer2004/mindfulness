@@ -5,7 +5,6 @@ import { TabModal } from '@repo/ui/components/ui/tab-modal'
 import { TimerSelector } from '@repo/ui/components/ui/timer-selector'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
-import { SphereSelector } from '@repo/ui/components/ui/sphere-selector'
 import { BreathingPatternSelector } from '@repo/ui/components/ui/breathing-pattern-selector'
 import { useApplicationStore } from '../../src/bg/state'
 import { appIcons, cn } from '@repo/ui/src/lib/utils'
@@ -17,7 +16,6 @@ const App: React.FC = () => {
 
   const storedTheme = useApplicationStore(state => state.theme)
   const storedSoundType = useApplicationStore(state => state.soundType)
-  const storedSphereType = useApplicationStore(state => state.sphereType)
   const storedBreathingPattern = useApplicationStore(
     state => state.breathingPattern,
   )
@@ -25,7 +23,6 @@ const App: React.FC = () => {
 
   const setStoredTheme = useApplicationStore(state => state.setTheme)
   const setStoredSoundType = useApplicationStore(state => state.setSoundType)
-  const setStoredSphereType = useApplicationStore(state => state.setSphereType)
   const setStoredBreathingPattern = useApplicationStore(
     state => state.setBreathingPattern,
   )
@@ -34,9 +31,6 @@ const App: React.FC = () => {
   const [selectedTheme, setSelectedTheme] = useState<string | null>(storedTheme)
   const [selectedSoundType, setSelectedSoundType] = useState<string | null>(
     storedSoundType,
-  )
-  const [selectedSphereType, setSelectedSphereType] = useState<string | null>(
-    storedSphereType,
   )
   const [selectedBreathingPattern, setSelectedBreathingPattern] = useState<
     string | null
@@ -75,11 +69,6 @@ const App: React.FC = () => {
   const handleSoundTypeSelection = (soundType: string) => {
     setSelectedSoundType(soundType)
     setStoredSoundType(soundType)
-  }
-
-  const handleSphereTypeSelection = (sphereType: string) => {
-    setSelectedSphereType(sphereType)
-    setStoredSphereType(sphereType)
   }
 
   const handleBreathingPatternSelection = (pattern: string) => {
@@ -123,17 +112,6 @@ const App: React.FC = () => {
           selectedSoundType={selectedSoundType}
           setSelectedSoundType={handleSoundTypeSelection}
           icons={appIcons.soundIcons}
-        />
-      ),
-    },
-    {
-      name: 'Sphere',
-      key: 'sphere',
-      panel: (
-        <SphereSelector
-          selectedSphereType={selectedSphereType}
-          setSelectedSphereType={handleSphereTypeSelection}
-          icons={appIcons.reminderIcons}
         />
       ),
     },

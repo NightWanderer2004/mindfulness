@@ -17,6 +17,9 @@ export default defineConfig({
       },
     ],
   },
+  chrome_url_overrides: {
+    newtab: 'entrypoints/newtab/index.html',
+  },
   modules: ['@wxt-dev/module-react'],
   dev: {
     server: {
@@ -28,6 +31,7 @@ export default defineConfig({
     disabled: true,
   },
 
+  //@ts-ignore
   vite: () => ({
     plugins: [tsconfigPaths()],
     optimizeDeps: {

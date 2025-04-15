@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { animations, cn, themeColorsGradient } from '../../lib/utils'
+import { animations, cn } from '../../lib/utils'
 
 interface BreathingSphereProps {
   theme: string | null
@@ -11,9 +11,32 @@ interface BreathingSphereProps {
   isActive?: boolean
 }
 
+// Note: themeColorsGradient is defined locally instead of importing from utils
+// because importing causes styling issues with Tailwind CSS gradients
+const themeColorsGradient = {
+  harmony: {
+    gradient: 'from-amber-300 via-amber-200 to-amber-100',
+  },
+  wandering: {
+    gradient: 'from-blue-400 via-blue-300 to-blue-50',
+  },
+  openness: {
+    gradient: 'from-lime-300 via-lime-200 to-lime-50',
+  },
+  confidence: {
+    gradient: 'from-green-300 via-green-200 to-green-50',
+  },
+  softness: {
+    gradient: 'from-sky-300 via-sky-200 to-sky-50',
+  },
+  tiredness: {
+    gradient: 'from-red-400 via-red-300 to-red-100',
+  },
+}
+
 export const BreathingSphere: React.FC<BreathingSphereProps> = ({
   theme,
-  breathingPattern = 'Equal',
+  breathingPattern,
   className,
   size = 40,
   scaleMin = 0.25,
@@ -82,7 +105,6 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
     const inhaleFraction = inhale / totalDuration
     const holdFraction = hold / totalDuration
     const exhaleFraction = exhale / totalDuration
-    const afterExhaleFraction = holdAfterExhale / totalDuration
 
     // Accumulate for keyframe positions
     const inhaleDone = inhaleFraction
@@ -142,7 +164,7 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
       <motion.div
         className={cn(
           'absolute rounded-full bg-gradient-radial',
-          colors?.gradient || 'from-lime-300 via-lime-200 to-lime-50',
+          colors?.gradient,
         )}
         style={{
           width: config.size,
@@ -172,10 +194,10 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
   return (
     <div
       className={cn(
-        'relative flex items-center justify-center w-full h-full',
+        'relative pointer-events-none flex items-center justify-center w-full h-full',
         className,
       )}
-      style={{ transform: 'translateZ(0)' }} // Force hardware acceleration
+      style={{ transform: 'translateZ(0px)' }} // Force hardware acceleration
     >
       {renderSphere(dimensions.outer)}
       {renderSphere(dimensions.middleOuter)}

@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { animations, cn, themeColors } from '../../lib/utils'
+import { animations, cn } from '../../lib/utils'
 
 interface BreathingLightProps {
   theme: string | null
@@ -9,6 +9,45 @@ interface BreathingLightProps {
   size?: number
   scaleMin?: number
   isActive?: boolean
+}
+
+const themeColors = {
+  harmony: {
+    primary: 'from-amber-200 to-amber-200/10',
+    secondary: 'from-amber-100 to-amber-100/10',
+    tertiary: 'from-amber-50 to-amber-50/10',
+    center: 'bg-amber-50',
+  },
+  wandering: {
+    primary: 'from-blue-300 to-blue-300/10',
+    secondary: 'from-blue-200 to-blue-200/10',
+    tertiary: 'from-blue-100 to-blue-100/10',
+    center: 'bg-blue-50',
+  },
+  openness: {
+    primary: 'from-lime-200 to-lime-200/10',
+    secondary: 'from-lime-100 to-lime-100/10',
+    tertiary: 'from-lime-50 to-lime-50/10',
+    center: 'bg-lime-50',
+  },
+  confidence: {
+    primary: 'from-emerald-200 to-emerald-200/10',
+    secondary: 'from-emerald-100 to-emerald-100/10',
+    tertiary: 'from-emerald-50 to-emerald-50/10',
+    center: 'bg-emerald-50',
+  },
+  softness: {
+    primary: 'from-sky-200 to-sky-200/10',
+    secondary: 'from-sky-100 to-sky-100/10',
+    tertiary: 'from-sky-50 to-sky-50/10',
+    center: 'bg-sky-50',
+  },
+  tiredness: {
+    primary: 'from-red-200 to-red-200/10',
+    secondary: 'from-red-100 to-red-100/10',
+    tertiary: 'from-red-100 to-red-100/10',
+    center: 'bg-red-50',
+  },
 }
 
 type ThemeKey = keyof typeof themeColors
@@ -43,7 +82,7 @@ export const BreathingLight: React.FC<BreathingLightProps> = ({
       delay: 0,
       colorClass: themeColorSet.primary,
       baseOpacity: 0.9,
-      blur: 35,
+      blur: 40,
       scaleRange: [scaleMin, 0.9],
     },
     {
@@ -51,7 +90,7 @@ export const BreathingLight: React.FC<BreathingLightProps> = ({
       delay: 0.2,
       colorClass: themeColorSet.secondary,
       baseOpacity: 0.95,
-      blur: 25,
+      blur: 35,
       scaleRange: [scaleMin + 0.05, 0.85],
     },
     {
@@ -59,7 +98,7 @@ export const BreathingLight: React.FC<BreathingLightProps> = ({
       delay: 0.4,
       colorClass: themeColorSet.tertiary,
       baseOpacity: 1.0,
-      blur: 15,
+      blur: 25,
       scaleRange: [scaleMin + 0.1, 0.75],
     },
   ]
@@ -167,7 +206,7 @@ export const BreathingLight: React.FC<BreathingLightProps> = ({
           height: `${size * 0.35}vw`,
           maxWidth: `${size * 4.375}px`,
           maxHeight: `${size * 4.375}px`,
-          filter: 'blur(8px)',
+          filter: 'blur(12px)',
           boxShadow: '0 0 20px rgba(255, 255, 255, 0.8)',
         }}
         initial={{ scale: 0.9, opacity: 0.7 }}
@@ -198,7 +237,7 @@ export const BreathingLight: React.FC<BreathingLightProps> = ({
           height: `${size * 0.15}vw`,
           maxWidth: `${size * 1.875}px`,
           maxHeight: `${size * 1.875}px`,
-          filter: 'blur(3px)',
+          filter: 'blur(10px)',
         }}
         initial={{ scale: 0.9, opacity: 0.5 }}
         animate={

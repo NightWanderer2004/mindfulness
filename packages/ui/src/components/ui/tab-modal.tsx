@@ -2,11 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal } from './modal'
 import { TransitionPanel } from './transition-panel'
-import { ThemeSelector } from './theme-selector'
-import { SoundTypeSelector } from './sound-type-selector'
-import { ReminderTypeSelector } from './reminder-type-selector'
-import { BreathingPatternSelector } from './breathing-pattern-selector'
-import { cn, appIcons } from '../../lib/utils'
+import { cn } from '../../lib/utils'
 import { motion } from 'framer-motion'
 import useMeasure from 'react-use-measure'
 
@@ -20,92 +16,31 @@ interface TabModalProps {
   isOpen: boolean
   onClose: () => void
   tabs?: TabConfig[]
-  selectedTheme?: string | null
-  selectedSoundType?: string | null
-  selectedReminderType?: string | null
-  selectedBreathingPattern?: string | null
-  selectedTimer?: number | null
-  handleThemeSelection?: (theme: string) => void
-  handleSoundTypeSelection?: (soundType: string) => void
-  handleReminderTypeSelection?: (reminderType: string) => void
-  handleBreathingPatternSelection?: (pattern: string) => void
-  handleTimerSelection?: (timer: number) => void
 }
 
 export const TabModal: React.FC<TabModalProps> = ({
   isOpen,
   onClose,
   tabs,
-  selectedTheme,
-  selectedSoundType,
-  selectedReminderType,
-  selectedBreathingPattern,
-  handleThemeSelection,
-  handleSoundTypeSelection,
-  handleReminderTypeSelection,
-  handleBreathingPatternSelection,
 }) => {
   const [activeTabIndex, setActiveTabIndex] = useState(0)
   const [panelRef, panelBounds] = useMeasure({ polyfill: ResizeObserver })
 
   useEffect(() => setActiveTabIndex(0), [isOpen])
 
-  const defaultThemeHandler = (theme: string) => {
-    console.log('Theme selected:', theme)
-  }
-  const defaultSoundHandler = (sound: string) => {
-    console.log('Sound selected:', sound)
-  }
-  const defaultBreathingHandler = (pattern: string) => {
-    console.log('Breathing pattern selected:', pattern)
-  }
-  const defaultReminderHandler = (reminder: string) => {
-    console.log('Reminder selected:', reminder)
-  }
-
-  const defaultPanels = [
-    <ThemeSelector
-      key='themes'
-      selectedTheme={selectedTheme || null}
-      setSelectedTheme={handleThemeSelection || defaultThemeHandler}
-      icons={appIcons.themeIcons}
-    />,
-    <SoundTypeSelector
-      key='sound'
-      selectedSoundType={selectedSoundType || null}
-      setSelectedSoundType={handleSoundTypeSelection || defaultSoundHandler}
-      icons={appIcons.soundIcons}
-    />,
-    <BreathingPatternSelector
-      key='breathing'
-      selectedPattern={selectedBreathingPattern || null}
-      setSelectedPattern={
-        handleBreathingPatternSelection || defaultBreathingHandler
-      }
-    />,
-    <ReminderTypeSelector
-      key='reminder'
-      selectedReminderType={selectedReminderType || null}
-      setSelectedReminderType={
-        handleReminderTypeSelection || defaultReminderHandler
-      }
-      icons={appIcons.reminderIcons}
-    />,
-  ]
-
   const tabsToUse = tabs
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className='w-full'>
+    <Modal isOpen={isOpen} onClose={onClose} className='w-full max-w-sm'>
       <div className='flex flex-col space-y-2.5'>
-        <div className='flex justify-between border-b border-primary/10 pb-2.5'>
+        <div className='flex justify-between md:justify-normal gap-1.5 md:mb-1'>
           {tabsToUse?.map((tab, index) => (
             <button
               key={tab.key}
               className={cn(
-                'px-3 py-1 text-base rounded-t-lg transition-colors',
+                'px-3 py-1 text-base md:text-lg rounded-t-xl rounded-b transition-colors',
                 activeTabIndex === index
-                  ? 'bg-primary/10 text-primary'
+                  ? 'bg-primary/[8%] text-primary'
                   : 'text-primary/60 hover:text-primary/80',
               )}
               onClick={() => setActiveTabIndex(index)}
@@ -117,12 +52,14 @@ export const TabModal: React.FC<TabModalProps> = ({
 
         <motion.div
           layout='position'
-          className='relative '
+          className='relative w-full max-w-sm mx-auto'
           animate={{
             height: panelBounds.height,
+            width: panelBounds.width,
           }}
           transition={{
             height: { type: 'spring', stiffness: 300, damping: 30 },
+            width: { type: 'spring', stiffness: 300, damping: 30 },
             layout: { type: 'spring', stiffness: 300, damping: 30 },
           }}
         >
@@ -130,11 +67,11 @@ export const TabModal: React.FC<TabModalProps> = ({
             activeIndex={activeTabIndex}
             transition={{
               x: { type: 'spring', stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 },
+              opacity: { duration: 0.075, ease: 'linear' },
             }}
             variants={{
               enter: {
-                x: 65,
+                x: 45,
                 opacity: 0,
               },
               center: {
@@ -142,7 +79,7 @@ export const TabModal: React.FC<TabModalProps> = ({
                 opacity: 1,
               },
               exit: {
-                x: -65,
+                x: -45,
                 opacity: 0,
               },
             }}

@@ -3,7 +3,6 @@ import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import { Modal } from '@repo/ui/components/ui/modal'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
-import { SphereSelector } from '@repo/ui/components/ui/sphere-selector'
 import { TransitionPanel } from '@repo/ui/components/ui/transition-panel'
 import { HoldSphere } from '@repo/ui/components/ui/hold-sphere'
 import { motion } from 'framer-motion'
@@ -18,9 +17,6 @@ const steps = [
     description: 'Next, had better to choose sound type',
   },
   {
-    description: 'And the last step is sphere type',
-  },
-  {
     description:
       'All set! Wish you a great experience further. Hold «space» to finish.',
   },
@@ -29,27 +25,32 @@ const steps = [
 const App: React.FC = () => {
   const theme = useApplicationStore(state => state.theme)
   const soundType = useApplicationStore(state => state.soundType)
-  const sphereType = useApplicationStore(state => state.sphereType)
   const setTheme = useApplicationStore(state => state.setTheme)
   const setSoundType = useApplicationStore(state => state.setSoundType)
-  const setSphereType = useApplicationStore(state => state.setSphereType)
 
   const [selectedTheme, setSelectedTheme] = useState<string | null>(theme)
   const [selectedSoundType, setSelectedSoundType] = useState<string | null>(
     soundType,
   )
-  const [selectedSphereType, setSelectedSphereType] = useState<string | null>(
-    sphereType,
-  )
   const [isThemeModalOpen, setIsThemeModalOpen] = useState<boolean>(false)
   const [isSoundModalOpen, setIsSoundModalOpen] = useState<boolean>(false)
-  const [isSphereModalOpen, setIsSphereModalOpen] = useState<boolean>(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   const [setupComplete, setSetupComplete] = useState(false)
 
   const getCurrentStep = (): number => {
     return activeIndex
+  }
+
+  const handleSetupComplete = () => setSetupComplete(true)
+
+  const handleCloseTab = () => {
+    window.close()
+  }
+
+  const handleSetActiveIndex = (newIndex: number) => {
+    setDirection(newIndex > activeIndex ? 1 : -1)
+    setActiveIndex(newIndex)
   }
 
   useEffect(() => {
@@ -67,14 +68,7 @@ const App: React.FC = () => {
   }, [selectedSoundType])
 
   useEffect(() => {
-    if (selectedSphereType && activeIndex === 2) {
-      setDirection(1)
-      setActiveIndex(3)
-    }
-  }, [selectedSphereType])
-
-  useEffect(() => {
-    if (setupComplete && activeIndex === 3) {
+    if (setupComplete && activeIndex === 2) {
       handleCloseTab()
     }
   }, [setupComplete, activeIndex])
@@ -96,22 +90,8 @@ const App: React.FC = () => {
       } else if (currentStep === 1 && selectedSoundType) {
         setDirection(1)
         setActiveIndex(2)
-      } else if (currentStep === 2 && selectedSphereType) {
-        setDirection(1)
-        setActiveIndex(3)
       }
     }
-  }
-
-  const handleSetupComplete = () => setSetupComplete(true)
-
-  const handleCloseTab = () => {
-    window.close()
-  }
-
-  const handleSetActiveIndex = (newIndex: number) => {
-    setDirection(newIndex > activeIndex ? 1 : -1)
-    setActiveIndex(newIndex)
   }
 
   useEffect(() => {
@@ -137,16 +117,6 @@ const App: React.FC = () => {
     )
   }
 
-  const getSphereIcon = () => {
-    if (!selectedSphereType) return appIcons.utility.themes // Using themes as a default icon
-    const sphereKey = selectedSphereType.toLowerCase()
-    return (
-      appIcons.reminderIcons[
-        sphereKey as keyof typeof appIcons.reminderIcons
-      ] || appIcons.utility.themes
-    )
-  }
-
   const handleThemeSelection = (theme: string) => {
     setSelectedTheme(theme)
     setTheme(theme)
@@ -156,16 +126,6 @@ const App: React.FC = () => {
     setSelectedSoundType(soundType)
     setSoundType(soundType)
   }
-
-  const handleSphereTypeSelection = (sphereType: string) => {
-    setSelectedSphereType(sphereType)
-    setSphereType(sphereType)
-  }
-
-  const canProceed =
-    (activeIndex === 0 && selectedTheme) ||
-    (activeIndex === 1 && selectedSoundType) ||
-    (activeIndex === 2 && selectedSphereType)
 
   const contentVariants = {
     enter: (direction: number) => ({
@@ -200,8 +160,7 @@ const App: React.FC = () => {
       )}
 
       {(activeIndex === 0 && selectedTheme) ||
-      (activeIndex === 1 && selectedSoundType) ||
-      (activeIndex === 2 && selectedSphereType) ? (
+      (activeIndex === 1 && selectedSoundType) ? (
         <motion.button
           whileHover={animations.button.whileHover}
           whileTap={animations.button.whileTap}
@@ -235,17 +194,8 @@ const App: React.FC = () => {
         onClick: () => setIsSoundModalOpen(true),
       },
       {
-        key: 'sphere',
-        description: steps[2]?.description,
-        label: selectedSphereType
-          ? `Sphere: ${selectedSphereType}`
-          : 'Choose Sphere',
-        icon: getSphereIcon(),
-        onClick: () => setIsSphereModalOpen(true),
-      },
-      {
         key: 'complete',
-        description: steps[3]?.description,
+        description: steps[2]?.description,
         customContent: (
           <HoldSphere
             holdDuration={2200}
@@ -292,7 +242,7 @@ const App: React.FC = () => {
       <div className='absolute inset-0 bg-sky-bg-main bg-cover bg-center bg-no-repeat blur-sm scale-105 pointer-events-none brightness-110 z-0' />
 
       <div
-        className={`fixed top-2.5 right-[52px] flex flex-col gap-1 items-center z-50 transition-opacity duration-300 ${activeIndex === 3 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed top-2.5 right-[52px] flex flex-col gap-1 items-center z-50 transition-opacity duration-300 ${activeIndex === 2 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
         <svg
           width='24'
@@ -387,28 +337,6 @@ const App: React.FC = () => {
             setIsSoundModalOpen(false)
           }}
           icons={appIcons.soundIcons}
-        />
-      </Modal>
-
-      <Modal
-        isOpen={isSphereModalOpen}
-        onClose={() => setIsSphereModalOpen(false)}
-      >
-        <div className='mb-6'>
-          <h2 className='text-3xl font-medium mb-1.5 bg-gradient-to-br from-primary/70 via-primary to-primary bg-clip-text text-transparent bg-[length:200%_200%] bg-[position:0%_0%]'>
-            Choose Your Sphere
-          </h2>
-          <p className='text-base text-primary/85'>
-            Select a sphere type for your meditation
-          </p>
-        </div>
-        <SphereSelector
-          selectedSphereType={selectedSphereType}
-          setSelectedSphereType={sphereType => {
-            handleSphereTypeSelection(sphereType)
-            setIsSphereModalOpen(false)
-          }}
-          icons={appIcons.reminderIcons}
         />
       </Modal>
     </div>

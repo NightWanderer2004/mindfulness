@@ -31,7 +31,7 @@ export const BreathingPatternSelector: React.FC<
 
   return (
     <div className='space-y-3'>
-      <div className='grid grid-cols-2 gap-2'>
+      <div className='grid grid-cols-2 gap-2 lg:gap-4 place-items-center'>
         {breathingPatterns.map(pattern => (
           <motion.button
             key={pattern.name}
@@ -39,14 +39,16 @@ export const BreathingPatternSelector: React.FC<
             whileTap={animations.button.whileTap}
             transition={animations.button.transition}
             className={cn(
-              'p-1.5 rounded-xl border-2 transition-colors duration-200 w-full',
+              'p-1.5 md:py-2.5 md:px-4 rounded-xl border-2 transition-colors duration-200 w-full',
               selectedPattern === pattern.name
                 ? 'border-primary/30 bg-primary/10 shadow-sm'
                 : 'border-transparent hover:bg-primary/5',
             )}
             onClick={() => setSelectedPattern?.(pattern.name)}
           >
-            <span className={cn('text-base font-medium text-primary/90')}>
+            <span
+              className={cn('text-base md:text-lg font-medium text-primary/90')}
+            >
               {pattern.name}
             </span>
           </motion.button>
