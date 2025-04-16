@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { AnimatedButton } from './animated-btn'
 import { animations } from '../../lib/utils'
@@ -10,6 +10,7 @@ export interface ThemeSoundControlsProps {
   getSoundIcon: () => string
   onThemeClick: () => void
   onSoundClick: () => void
+  onHoverStateChange?: (isHovering: boolean) => void
 }
 
 export const ThemeSoundControls: React.FC<ThemeSoundControlsProps> = ({
@@ -19,8 +20,15 @@ export const ThemeSoundControls: React.FC<ThemeSoundControlsProps> = ({
   getSoundIcon,
   onThemeClick,
   onSoundClick,
+  onHoverStateChange,
 }) => {
   const [isHovering, setIsHovering] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (onHoverStateChange) {
+      onHoverStateChange(isHovering)
+    }
+  }, [isHovering, onHoverStateChange])
 
   return (
     <div className='relative max-w-md w-full'>

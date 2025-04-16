@@ -125,7 +125,6 @@ const App: React.FC = () => {
         <TimerSelector
           selectedTimer={selectedTimer}
           setSelectedTimer={handleTimerSelection}
-          icons={appIcons.utility}
         />
       ),
     },

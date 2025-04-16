@@ -54,7 +54,7 @@ const createVanillaStore = () =>
         soundType: '',
         sphereType: 'zen',
         breathingPattern: 'Equal',
-        meditationTimer: 10,
+        meditationTimer: 4,
         setUser: user => set({ user }),
         setLoginStatus: loginStatus => set({ loginStatus }),
         setTheme: theme => set({ theme }),

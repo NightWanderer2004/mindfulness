@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { cn } from '../../lib/utils'
-import { Pause, Play, RefreshCw } from 'lucide-react'
+import { animations, cn } from '../../lib/utils'
+import { motion } from 'framer-motion'
+import PauseIcon from '../../../assets/icons/timer/pause.png'
+import PlayIcon from '../../../assets/icons/timer/play.png'
+import RepeatIcon from '../../../assets/icons/timer/repeat.png'
 
 export interface MeditationTimerProps {
   meditationTimer: number
@@ -10,12 +13,23 @@ export interface MeditationTimerProps {
   onPause?: () => void
   onResume?: () => void
   fadeAudioNearEnd?: () => void
+  isHovering?: boolean
 }
 
 const formatTime = (seconds: number): string => {
   const mins = Math.floor(seconds / 60)
   const secs = seconds % 60
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+}
+
+// Theme colors map
+const themeColors = {
+  Harmony: 'text-amber-500/90',
+  Wandering: 'text-blue-400/90',
+  Openness: 'text-lime-500/90',
+  Confidence: 'text-emerald-400/90',
+  Softness: 'text-blue-400/90',
+  Tiredness: 'text-red-400/90',
 }
 
 export const MeditationTimer: React.FC<MeditationTimerProps> = ({
@@ -26,6 +40,7 @@ export const MeditationTimer: React.FC<MeditationTimerProps> = ({
   onPause,
   onResume,
   fadeAudioNearEnd,
+  isHovering = false,
 }) => {
   const [remainingTime, setRemainingTime] = useState<number>(
     meditationTimer * 60,
@@ -33,6 +48,9 @@ export const MeditationTimer: React.FC<MeditationTimerProps> = ({
   const [isTimerActive, setIsTimerActive] = useState<boolean>(true)
   const [isTimerComplete, setIsTimerComplete] = useState<boolean>(false)
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Get the current theme color
+  const themeColor = theme && themeColors[theme as keyof typeof themeColors]
 
   const startTimer = useCallback(() => {
     if (timerIntervalRef.current) return
@@ -99,39 +117,47 @@ export const MeditationTimer: React.FC<MeditationTimerProps> = ({
   }, [meditationTimer, resetTimer, startTimer])
 
   return (
-    <div className={cn('flex flex-col items-center mb-3', className)}>
-      <div className='flex items-center gap-2.5 justify-center'>
+    <motion.div
+      className={cn('relative z-50 flex justify-center', className)}
+      animate={{ y: isHovering ? 0 : 45 }}
+      transition={{ duration: 0.625, ease: animations.easing.smooth }}
+    >
+      <div className='flex items-center bg-white/85 backdrop-blur rounded-2xl shadow-smooth border border-white/35'>
         <button
           onClick={resetTimer}
-          className='bg-background/95 hover:bg-background/40 text-text-primary p-2 rounded-xl transition-colors'
+          className={cn(
+            'flex items-center justify-center pr-3 pl-4 h-full',
+            themeColor,
+          )}
           aria-label='Reset timer'
         >
-          <RefreshCw strokeWidth={2.5} size={18} />
+          <img src={RepeatIcon} alt='Refresh' className='size-[22px]' />
         </button>
 
-        <div className='relative min-w-[120px] text-center'>
-          <div className='absolute inset-0 bg-white/85 rounded-2xl shadow-smooth border border-white/35' />
-          <div
-            className={cn(
-              'relative z-20 text-2xl text-text-primary font-medium px-5 py-1.5 font-variant-numeric tabular-nums',
-            )}
-          >
-            {formatTime(remainingTime)}
-          </div>
+        <div
+          className={cn(
+            'text-[28px] leading-none font-medium tabular-nums border-x-[1.5px] border-white/35 p-2.5',
+            themeColor,
+          )}
+        >
+          {formatTime(remainingTime)}
         </div>
 
         <button
           onClick={toggleTimer}
-          className='bg-background/95 hover:bg-background/40 text-text-primary p-2 rounded-xl transition-colors'
+          className={cn(
+            'flex items-center justify-center pl-3 pr-4 h-full',
+            themeColor,
+          )}
           aria-label={isTimerActive ? 'Pause timer' : 'Resume timer'}
         >
           {isTimerActive ? (
-            <Pause fill='text-text-primary' size={18} />
+            <img src={PauseIcon} alt='Pause' className='size-[21px]' />
           ) : (
-            <Play fill='text-text-primary' size={18} />
+            <img src={PlayIcon} alt='Play' className='size-[21px]' />
           )}
         </button>
       </div>
-    </div>
+    </motion.div>
   )
 }

@@ -35,16 +35,44 @@ const App: React.FC = () => {
   )
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false)
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
-  const [isMeditating, setIsMeditating] = useState(false)
+  const [isSessionActive, setIsSessionActive] = useState(false)
 
-  const handleOpenContentPage = () => {
+  useEffect(() => {
+    checkSessionStatus()
+
+    // Set up interval to check session status periodically
+    const checkInterval = setInterval(checkSessionStatus, 2000)
+
+    return () => {
+      clearInterval(checkInterval)
+    }
+  }, [])
+
+  const checkSessionStatus = () => {
     if (typeof chrome !== 'undefined' && chrome.tabs && chrome.runtime) {
-      chrome.tabs.create({
-        url: chrome.runtime.getURL('session.html'),
-      })
+      chrome.tabs.query(
+        { url: chrome.runtime.getURL('session.html') },
+        tabs => {
+          setIsSessionActive(tabs.length > 0)
+
+          // Update document title based on session status
+          if (tabs.length > 0) {
+            document.title = 'MindfulTab - Meditating'
+          } else {
+            document.title = 'New Tab'
+          }
+        },
+      )
     }
   }
 
+  const handleOpenContentPage = () => {
+    if (typeof chrome !== 'undefined' && chrome.tabs && chrome.runtime) {
+      window.location.href = chrome.runtime.getURL('session.html')
+    }
+  }
+
+  // Update time
   useEffect(() => {
     const timer = setInterval(() => {
       setDate(new Date())
@@ -171,6 +199,25 @@ const App: React.FC = () => {
       ),
     },
   ]
+
+  // If session is active, render minimal UI
+  if (isSessionActive) {
+    return (
+      <div className='relative select-none min-h-screen bg-new-tab dark:bg-new-tab-evening bg-no-repeat bg-cover'>
+        <div className='absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/5 to-transparent pointer-events-none' />
+        <div className='absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/5 to-transparent pointer-events-none' />
+
+        <div className='absolute flex flex-col gap-2 top-2.5 left-3.5 text-background'>
+          <span className='text-6xl font-semibold'>{formatDate(date)}</span>
+          <span className='text-4xl font-medium'>{formatTime(date)}</span>
+        </div>
+
+        <span className='absolute bottom-2.5 left-3.5 text-4xl leading-none font-sans font-medium bg-gradient-to-br from-background/70 via-background to-background/70 bg-clip-text text-transparent bg-[length:250%_250%] bg-[position:0%_0%] animate-gradient-x'>
+          MindfulTab
+        </span>
+      </div>
+    )
+  }
 
   return (
     <div className='relative select-none min-h-screen bg-new-tab dark:bg-new-tab-evening bg-no-repeat bg-cover'>

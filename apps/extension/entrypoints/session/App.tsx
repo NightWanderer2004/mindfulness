@@ -8,7 +8,8 @@ import { ThemeSoundControls } from '@repo/ui/components/ui/theme-sound-controls'
 import { BreathingSphere } from '@repo/ui/components/ui/breathing-sphere'
 import { FlashScreen } from '@repo/ui/components/ui/flash-screen'
 import { MeditationTimer } from '@repo/ui/components/ui/meditation-timer'
-import { appIcons } from '@repo/ui/src/lib/utils'
+import { appIcons, cn } from '@repo/ui/src/lib/utils'
+
 type ImageImport = {
   default: string
 }
@@ -104,6 +105,7 @@ const App: React.FC = () => {
   const [isAutoChangeEnabled, setIsAutoChangeEnabled] = useState<boolean>(true)
   const [showFlashScreen, setShowFlashScreen] = useState<boolean>(false)
   const [isBreathingActive, setIsBreathingActive] = useState<boolean>(true)
+  const [isBottomAreaHovering, setIsBottomAreaHovering] = useState(false)
 
   const imageNumberRef = useRef<number>(0)
   const previousThemeRef = useRef<string | null>(null)
@@ -432,7 +434,12 @@ const App: React.FC = () => {
         duration={1500}
       />
 
-      <div className='absolute bottom-0 w-full z-10 flex flex-col items-center'>
+      <div
+        className={cn(
+          'absolute bottom-0 w-full z-10 flex flex-col items-center transition-all duration-300',
+          isBottomAreaHovering ? 'gap-3' : 'gap-5',
+        )}
+      >
         <MeditationTimer
           meditationTimer={meditationTimer}
           theme={theme || undefined}
@@ -440,6 +447,7 @@ const App: React.FC = () => {
           onPause={handlePauseBreathing}
           onResume={handleResumeBreathing}
           fadeAudioNearEnd={handleFadeAudioNearEnd}
+          isHovering={isBottomAreaHovering}
         />
 
         <ThemeSoundControls
@@ -449,6 +457,7 @@ const App: React.FC = () => {
           getSoundIcon={getSoundIcon}
           onThemeClick={() => setIsThemeModalOpen(true)}
           onSoundClick={() => setIsSoundModalOpen(true)}
+          onHoverStateChange={setIsBottomAreaHovering}
         />
       </div>
 
