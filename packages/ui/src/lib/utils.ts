@@ -19,6 +19,7 @@ import themes from '../../assets/icons/themes.png'
 import meditate from '../../assets/icons/meditate.png'
 import cogwheel from '../../assets/icons/cogwheel.png'
 import sound from '../../assets/icons/sound.png'
+import pro from '../../assets/icons/pro.png'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -130,5 +131,39 @@ export const appIcons = {
     meditate,
     cogwheel,
     sound,
+    pro,
   },
+}
+
+// Chrome extension types and utilities
+export interface ChromeTab {
+  id?: number
+  url?: string
+  active: boolean
+  [key: string]: any
+}
+
+// Check if a meditation session is active
+export const checkSessionStatus = (
+  setIsSessionActive: (isActive: boolean) => void,
+) => {
+  if (
+    typeof window.chrome !== 'undefined' &&
+    window.chrome.tabs &&
+    window.chrome.runtime
+  ) {
+    window.chrome.tabs.query(
+      { url: window.chrome.runtime.getURL('session.html') },
+      (tabs: ChromeTab[]) => {
+        setIsSessionActive(tabs.length > 0)
+      },
+    )
+  }
+}
+
+// Fix Chrome types error
+declare global {
+  interface Window {
+    chrome: any
+  }
 }

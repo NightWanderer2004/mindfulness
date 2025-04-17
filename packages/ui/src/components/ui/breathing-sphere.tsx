@@ -2,6 +2,14 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { animations, cn } from '../../lib/utils'
 
+interface BreathingPatternConfig {
+  duration: number
+  inhale: number
+  exhale: number
+  hold: number
+  holdAfterExhale: number
+}
+
 interface BreathingSphereProps {
   theme: string | null
   breathingPattern?: string | null
@@ -9,6 +17,7 @@ interface BreathingSphereProps {
   size?: number
   scaleMin?: number
   isActive?: boolean
+  customPatterns?: Record<string, BreathingPatternConfig>
 }
 
 // Note: themeColorsGradient is defined locally instead of importing from utils
@@ -41,6 +50,7 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
   size = 40,
   scaleMin = 0.25,
   isActive = true,
+  customPatterns = {},
 }) => {
   const themeKey = theme?.toLowerCase() || 'openness'
   const patternKey = breathingPattern?.toLowerCase() || 'equal'
@@ -48,10 +58,16 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
     themeColorsGradient[themeKey as keyof typeof themeColorsGradient] ||
     themeColorsGradient.openness
 
+  // Check if this is a custom pattern
+  const customPattern = customPatterns[breathingPattern || '']
+
+  // Use custom pattern if available, otherwise use default
   const pattern =
+    customPattern ||
     animations.breathingPatterns[
       patternKey as keyof typeof animations.breathingPatterns
-    ] || animations.breathingPatterns.equal
+    ] ||
+    animations.breathingPatterns.equal
 
   const dimensions = {
     outer: {

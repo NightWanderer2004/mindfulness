@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
-import { appIcons } from '@repo/ui/src/lib/utils'
+import {
+  appIcons,
+  cn,
+  checkSessionStatus,
+  animations,
+} from '@repo/ui/src/lib/utils'
 import { useApplicationStore } from '../../src/bg/state'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
 import { TabModal } from '@repo/ui/components/ui/tab-modal'
 import { TimerSelector } from '@repo/ui/components/ui/timer-selector'
 import { BreathingPatternSelector } from '@repo/ui/components/ui/breathing-pattern-selector'
+import { ReminderSettings } from '@repo/ui/components/ui/reminder-settings'
+import { Modal } from '@repo/ui/components/ui/modal'
+import { PlusPackContent } from '@repo/ui/components/ui/plus-pack-modal'
 
 const App: React.FC = () => {
   const [date, setDate] = useState<Date>(new Date())
@@ -14,6 +22,26 @@ const App: React.FC = () => {
   const soundType = useApplicationStore(state => state.soundType)
   const breathingPattern = useApplicationStore(state => state.breathingPattern)
   const meditationTimer = useApplicationStore(state => state.meditationTimer)
+  const hasPlus = useApplicationStore(state => state.hasPlus)
+  const togglePlus = useApplicationStore(state => state.togglePlus)
+  const resetPlusFeatures = useApplicationStore(
+    state => state.resetPlusFeatures,
+  )
+  const customBreathingPatterns = useApplicationStore(
+    state => state.customBreathingPatterns,
+  )
+  const addCustomBreathingPattern = useApplicationStore(
+    state => state.addCustomBreathingPattern,
+  )
+  const removeCustomBreathingPattern = useApplicationStore(
+    state => state.removeCustomBreathingPattern,
+  )
+  const reminder = useApplicationStore(state => state.reminder)
+  const toggleReminder = useApplicationStore(state => state.toggleReminder)
+  const setReminderFrequency = useApplicationStore(
+    state => state.setReminderFrequency,
+  )
+
   const setTheme = useApplicationStore(state => state.setTheme)
   const setSoundType = useApplicationStore(state => state.setSoundType)
   const setBreathingPattern = useApplicationStore(
@@ -35,40 +63,30 @@ const App: React.FC = () => {
   )
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false)
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
+  const [isPlusModalOpen, setIsPlusModalOpen] = useState(false)
   const [isSessionActive, setIsSessionActive] = useState(false)
 
   useEffect(() => {
-    checkSessionStatus()
+    checkSessionStatus(setIsSessionActive)
 
     // Set up interval to check session status periodically
-    const checkInterval = setInterval(checkSessionStatus, 2000)
+    const checkInterval = setInterval(
+      () => checkSessionStatus(setIsSessionActive),
+      2000,
+    )
 
     return () => {
       clearInterval(checkInterval)
     }
   }, [])
 
-  const checkSessionStatus = () => {
-    if (typeof chrome !== 'undefined' && chrome.tabs && chrome.runtime) {
-      chrome.tabs.query(
-        { url: chrome.runtime.getURL('session.html') },
-        tabs => {
-          setIsSessionActive(tabs.length > 0)
-
-          // Update document title based on session status
-          if (tabs.length > 0) {
-            document.title = 'MindfulTab - Meditating'
-          } else {
-            document.title = 'New Tab'
-          }
-        },
-      )
-    }
-  }
-
   const handleOpenContentPage = () => {
-    if (typeof chrome !== 'undefined' && chrome.tabs && chrome.runtime) {
-      window.location.href = chrome.runtime.getURL('session.html')
+    if (
+      typeof window.chrome !== 'undefined' &&
+      window.chrome.tabs &&
+      window.chrome.runtime
+    ) {
+      window.location.href = window.chrome.runtime.getURL('session.html')
     }
   }
 
@@ -148,6 +166,19 @@ const App: React.FC = () => {
     setMeditationTimer(timer)
   }
 
+  const handlePlusToggle = () => {
+    if (hasPlus) {
+      resetPlusFeatures()
+    } else {
+      togglePlus()
+    }
+    setIsPlusModalOpen(false)
+  }
+
+  const handleShowPlusModal = () => {
+    setIsPlusModalOpen(true)
+  }
+
   const themeTabs = [
     {
       name: 'Theme',
@@ -157,6 +188,8 @@ const App: React.FC = () => {
           selectedTheme={selectedTheme}
           setSelectedTheme={theme => handleThemeSelection(theme)}
           icons={appIcons.themeIcons}
+          hasPro={hasPlus}
+          onProToggle={handleShowPlusModal}
         />
       ),
     },
@@ -170,6 +203,8 @@ const App: React.FC = () => {
             handleSoundTypeSelection(soundType)
           }
           icons={appIcons.soundIcons}
+          hasPro={hasPlus}
+          onProToggle={handleShowPlusModal}
         />
       ),
     },
@@ -195,29 +230,28 @@ const App: React.FC = () => {
           setSelectedPattern={pattern =>
             handleBreathingPatternSelection(pattern)
           }
+          customPatterns={customBreathingPatterns}
+          onAddCustomPattern={addCustomBreathingPattern}
+          onRemoveCustomPattern={removeCustomBreathingPattern}
+          hasPro={hasPlus}
+          onProToggle={handleShowPlusModal}
+        />
+      ),
+    },
+    {
+      name: 'Reminders',
+      key: 'reminders',
+      panel: (
+        <ReminderSettings
+          settings={reminder}
+          onToggle={toggleReminder}
+          onChangeFrequency={setReminderFrequency}
+          hasPro={hasPlus}
+          onProToggle={handleShowPlusModal}
         />
       ),
     },
   ]
-
-  // If session is active, render minimal UI
-  if (isSessionActive) {
-    return (
-      <div className='relative select-none min-h-screen bg-new-tab dark:bg-new-tab-evening bg-no-repeat bg-cover'>
-        <div className='absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/5 to-transparent pointer-events-none' />
-        <div className='absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/5 to-transparent pointer-events-none' />
-
-        <div className='absolute flex flex-col gap-2 top-2.5 left-3.5 text-background'>
-          <span className='text-6xl font-semibold'>{formatDate(date)}</span>
-          <span className='text-4xl font-medium'>{formatTime(date)}</span>
-        </div>
-
-        <span className='absolute bottom-2.5 left-3.5 text-4xl leading-none font-sans font-medium bg-gradient-to-br from-background/70 via-background to-background/70 bg-clip-text text-transparent bg-[length:250%_250%] bg-[position:0%_0%] animate-gradient-x'>
-          MindfulTab
-        </span>
-      </div>
-    )
-  }
 
   return (
     <div className='relative select-none min-h-screen bg-new-tab dark:bg-new-tab-evening bg-no-repeat bg-cover'>
@@ -228,29 +262,54 @@ const App: React.FC = () => {
         <span className='text-6xl font-semibold'>{formatDate(date)}</span>
         <span className='text-4xl font-medium'>{formatTime(date)}</span>
       </div>
-      <div className='absolute top-2.5 right-3.5 flex gap-2 p-2 bg-background/90 border-[1.5px] border-white/20 shadow-smooth backdrop-blur-sm rounded-3xl'>
-        <AnimatedButton
-          isAnimated
-          iconOnly
-          icon={appIcons.utility.meditate}
-          label='Meditate'
-          onClick={handleOpenContentPage}
-        />
-        <AnimatedButton
-          iconOnly
-          label='Theme'
-          icon={getThemeIcon()}
-          onClick={() => setIsThemeModalOpen(true)}
-        />
-        <AnimatedButton
-          iconOnly
-          label='Settings'
-          icon={getSettingsIcon()}
-          onClick={() => setIsSettingsModalOpen(true)}
-        />
+
+      <div
+        className={cn(
+          isSessionActive ? 'hidden' : 'flex',
+          'absolute top-2.5 right-3.5 gap-2 p-2 bg-background/90 border-[1.5px] border-white/20 shadow-smooth backdrop-blur-sm rounded-3xl',
+        )}
+      >
+        <div title='Begin Meditation'>
+          <AnimatedButton
+            isAnimated
+            iconOnly
+            icon={appIcons.utility.meditate}
+            label='Meditate'
+            onClick={handleOpenContentPage}
+          />
+        </div>
+        <div title='Theme Settings'>
+          <AnimatedButton
+            iconOnly
+            label='Theme'
+            icon={getThemeIcon()}
+            onClick={() => setIsThemeModalOpen(true)}
+          />
+        </div>
+        <div title='Session Settings'>
+          <AnimatedButton
+            iconOnly
+            label='Settings'
+            icon={getSettingsIcon()}
+            onClick={() => setIsSettingsModalOpen(true)}
+          />
+        </div>
+        <div title={hasPlus ? 'Plus Pack Features Enabled' : 'Get Plus Pack'}>
+          <AnimatedButton
+            iconOnly
+            label={hasPlus ? 'Plus Pack Enabled' : 'Get Plus Pack'}
+            icon={appIcons.utility.pro}
+            onClick={() => setIsPlusModalOpen(true)}
+          />
+        </div>
       </div>
       <span className='absolute bottom-2.5 left-3.5 text-4xl leading-none font-sans font-medium bg-gradient-to-br from-background/70 via-background to-background/70 bg-clip-text text-transparent bg-[length:250%_250%] bg-[position:0%_0%] animate-gradient-x'>
-        MindfulTab
+        MindfulTab{' '}
+        {hasPlus && (
+          <span className='text-base font-semibold text-background align-top'>
+            Plus
+          </span>
+        )}
       </span>
       <TabModal
         isOpen={isThemeModalOpen}
@@ -262,6 +321,17 @@ const App: React.FC = () => {
         onClose={() => setIsSettingsModalOpen(false)}
         tabs={settingsTabs}
       />
+      <Modal
+        isOpen={isPlusModalOpen}
+        onClose={() => setIsPlusModalOpen(false)}
+        showDefaultButton={false}
+      >
+        <PlusPackContent
+          onGetPlus={handlePlusToggle}
+          onClose={() => setIsPlusModalOpen(false)}
+          hasPlus={hasPlus}
+        />
+      </Modal>
     </div>
   )
 }

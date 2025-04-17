@@ -20,6 +20,13 @@ export default defineConfig({
   chrome_url_overrides: {
     newtab: 'entrypoints/newtab/index.html',
   },
+  content: {
+    // Add the reminder content script to all pages
+    reminder: {
+      matches: ['<all_urls>'],
+      runAt: 'document_idle',
+    },
+  },
   modules: ['@wxt-dev/module-react'],
   dev: {
     server: {

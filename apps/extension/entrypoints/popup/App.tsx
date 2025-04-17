@@ -2,16 +2,26 @@ import React, { useState, useEffect } from 'react'
 import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import { MeditateButton } from '@repo/ui/components/ui/meditate-btn'
 import { TabModal } from '@repo/ui/components/ui/tab-modal'
+import { Modal } from '@repo/ui/components/ui/modal'
 import { TimerSelector } from '@repo/ui/components/ui/timer-selector'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
 import { BreathingPatternSelector } from '@repo/ui/components/ui/breathing-pattern-selector'
+import { ReminderSettings } from '@repo/ui/components/ui/reminder-settings'
 import { useApplicationStore } from '../../src/bg/state'
-import { appIcons, cn } from '@repo/ui/src/lib/utils'
+import {
+  appIcons,
+  cn,
+  checkSessionStatus,
+  animations,
+} from '@repo/ui/src/lib/utils'
+import { motion } from 'framer-motion'
+import { PlusPackContent } from '@repo/ui/components/ui/plus-pack-modal'
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isPlusModalOpen, setIsPlusModalOpen] = useState(false)
   const [isSessionActive, setIsSessionActive] = useState(false)
 
   const storedTheme = useApplicationStore(state => state.theme)
@@ -20,6 +30,18 @@ const App: React.FC = () => {
     state => state.breathingPattern,
   )
   const storedTimer = useApplicationStore(state => state.meditationTimer)
+  const customBreathingPatterns = useApplicationStore(
+    state => state.customBreathingPatterns,
+  )
+  const hasPlus = useApplicationStore(state => state.hasPlus)
+  const resetPlusFeatures = useApplicationStore(
+    state => state.resetPlusFeatures,
+  )
+  const reminder = useApplicationStore(state => state.reminder)
+  const toggleReminder = useApplicationStore(state => state.toggleReminder)
+  const setReminderFrequency = useApplicationStore(
+    state => state.setReminderFrequency,
+  )
 
   const setStoredTheme = useApplicationStore(state => state.setTheme)
   const setStoredSoundType = useApplicationStore(state => state.setSoundType)
@@ -27,6 +49,13 @@ const App: React.FC = () => {
     state => state.setBreathingPattern,
   )
   const setStoredTimer = useApplicationStore(state => state.setMeditationTimer)
+  const addCustomBreathingPattern = useApplicationStore(
+    state => state.addCustomBreathingPattern,
+  )
+  const removeCustomBreathingPattern = useApplicationStore(
+    state => state.removeCustomBreathingPattern,
+  )
+  const togglePlus = useApplicationStore(state => state.togglePlus)
 
   const [selectedTheme, setSelectedTheme] = useState<string | null>(storedTheme)
   const [selectedSoundType, setSelectedSoundType] = useState<string | null>(
@@ -38,19 +67,8 @@ const App: React.FC = () => {
   const [selectedTimer, setSelectedTimer] = useState<number | null>(storedTimer)
 
   useEffect(() => {
-    checkSessionStatus()
+    checkSessionStatus(setIsSessionActive)
   }, [])
-
-  const checkSessionStatus = () => {
-    if (typeof chrome !== 'undefined' && chrome.tabs && chrome.runtime) {
-      chrome.tabs.query(
-        { url: chrome.runtime.getURL('session.html') },
-        tabs => {
-          setIsSessionActive(tabs.length > 0)
-        },
-      )
-    }
-  }
 
   const getThemeIcon = () => {
     if (!selectedTheme) return appIcons.utility.themes
@@ -81,11 +99,40 @@ const App: React.FC = () => {
     setStoredTimer(timer)
   }
 
+  const handleAddCustomPattern = (name: string, config: any) => {
+    addCustomBreathingPattern(name, config)
+  }
+
+  const handleRemoveCustomPattern = (name: string) => {
+    removeCustomBreathingPattern(name)
+    // If the removed pattern was selected, switch to the default pattern
+    if (selectedBreathingPattern === name) {
+      handleBreathingPatternSelection('Equal')
+    }
+  }
+
+  const handlePlusToggle = () => {
+    if (hasPlus) {
+      resetPlusFeatures()
+    } else {
+      togglePlus()
+    }
+    setIsPlusModalOpen(false)
+  }
+
+  const handleShowPlusModal = () => {
+    setIsPlusModalOpen(true)
+  }
+
   const handleOpenContentPage = () => {
-    if (typeof chrome !== 'undefined' && chrome.tabs && chrome.runtime) {
-      chrome.tabs.create(
+    if (
+      typeof window.chrome !== 'undefined' &&
+      window.chrome.tabs &&
+      window.chrome.runtime
+    ) {
+      window.chrome.tabs.create(
         {
-          url: chrome.runtime.getURL('session.html'),
+          url: window.chrome.runtime.getURL('session.html'),
         },
         () => setIsSessionActive(true),
       )
@@ -101,6 +148,8 @@ const App: React.FC = () => {
           selectedTheme={selectedTheme}
           setSelectedTheme={handleThemeSelection}
           icons={appIcons.themeIcons}
+          hasPro={hasPlus}
+          onProToggle={handleShowPlusModal}
         />
       ),
     },
@@ -112,6 +161,8 @@ const App: React.FC = () => {
           selectedSoundType={selectedSoundType}
           setSelectedSoundType={handleSoundTypeSelection}
           icons={appIcons.soundIcons}
+          hasPro={hasPlus}
+          onProToggle={handleShowPlusModal}
         />
       ),
     },
@@ -135,6 +186,24 @@ const App: React.FC = () => {
         <BreathingPatternSelector
           selectedPattern={selectedBreathingPattern}
           setSelectedPattern={handleBreathingPatternSelection}
+          customPatterns={customBreathingPatterns}
+          onAddCustomPattern={handleAddCustomPattern}
+          onRemoveCustomPattern={handleRemoveCustomPattern}
+          hasPro={hasPlus}
+          onProToggle={handleShowPlusModal}
+        />
+      ),
+    },
+    {
+      name: 'Reminders',
+      key: 'reminders',
+      panel: (
+        <ReminderSettings
+          settings={reminder}
+          onToggle={toggleReminder}
+          onChangeFrequency={setReminderFrequency}
+          hasPro={hasPlus}
+          onProToggle={handleShowPlusModal}
         />
       ),
     },
@@ -174,6 +243,13 @@ const App: React.FC = () => {
                 icon={appIcons.utility.cogwheel}
                 onClick={() => setIsSettingsOpen(true)}
               />
+              {!hasPlus && (
+                <AnimatedButton
+                  label='Get Plus Pack'
+                  icon={appIcons.utility.pro}
+                  onClick={handleShowPlusModal}
+                />
+              )}
             </div>
           </div>
         )}
@@ -190,6 +266,18 @@ const App: React.FC = () => {
         onClose={() => setIsSettingsOpen(false)}
         tabs={settingsTabs}
       />
+
+      <Modal
+        isOpen={isPlusModalOpen}
+        onClose={() => setIsPlusModalOpen(false)}
+        showDefaultButton={false}
+      >
+        <PlusPackContent
+          onGetPlus={handlePlusToggle}
+          onClose={() => setIsPlusModalOpen(false)}
+          hasPlus={hasPlus}
+        />
+      </Modal>
     </div>
   )
 }

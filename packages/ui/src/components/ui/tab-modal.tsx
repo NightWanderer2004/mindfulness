@@ -33,7 +33,7 @@ export const TabModal: React.FC<TabModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} className='w-full max-w-sm'>
       <div className='flex flex-col space-y-2.5'>
-        <div className='flex justify-between md:justify-normal gap-1.5 md:mb-1'>
+        <div className='flex justify-between gap-1.5 md:mb-1'>
           {tabsToUse?.map((tab, index) => (
             <button
               key={tab.key}

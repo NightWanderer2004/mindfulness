@@ -9,6 +9,7 @@ import { BreathingSphere } from '@repo/ui/components/ui/breathing-sphere'
 import { FlashScreen } from '@repo/ui/components/ui/flash-screen'
 import { MeditationTimer } from '@repo/ui/components/ui/meditation-timer'
 import { appIcons, cn } from '@repo/ui/src/lib/utils'
+import { PlusPackContent } from '@repo/ui/components/ui/plus-pack-modal'
 
 type ImageImport = {
   default: string
@@ -90,8 +91,16 @@ const App: React.FC = () => {
   const soundType = useApplicationStore(state => state.soundType)
   const sphereType = useApplicationStore(state => state.sphereType)
   const breathingPattern = useApplicationStore(state => state.breathingPattern)
+  const customBreathingPatterns = useApplicationStore(
+    state => state.customBreathingPatterns,
+  )
   const meditationTimer =
     useApplicationStore(state => state.meditationTimer) ?? 10
+  const hasPlus = useApplicationStore(state => state.hasPlus)
+  const togglePlus = useApplicationStore(state => state.togglePlus)
+  const resetPlusFeatures = useApplicationStore(
+    state => state.resetPlusFeatures,
+  )
 
   const setTheme = useApplicationStore(state => state.setTheme)
   const setSoundType = useApplicationStore(state => state.setSoundType)
@@ -99,6 +108,7 @@ const App: React.FC = () => {
   const [backgroundUrl, setBackgroundUrl] = useState<string>('')
   const [isThemeModalOpen, setIsThemeModalOpen] = useState<boolean>(false)
   const [isSoundModalOpen, setIsSoundModalOpen] = useState<boolean>(false)
+  const [isPlusModalOpen, setIsPlusModalOpen] = useState<boolean>(false)
   const [currentTrackNumber, setCurrentTrackNumber] = useState<number>(
     getRandomTrackNumber(),
   )
@@ -383,6 +393,19 @@ const App: React.FC = () => {
     setIsSoundModalOpen(false)
   }
 
+  const handlePlusToggle = () => {
+    if (hasPlus) {
+      resetPlusFeatures()
+    } else {
+      togglePlus()
+    }
+    setIsPlusModalOpen(false)
+  }
+
+  const handleShowPlusModal = () => {
+    setIsPlusModalOpen(true)
+  }
+
   const getThemeIcon = () => {
     if (!theme) return appIcons.utility.themes
     const themeKey = theme.toLowerCase()
@@ -423,6 +446,7 @@ const App: React.FC = () => {
         <BreathingSphere
           theme={theme}
           breathingPattern={breathingPattern}
+          customPatterns={hasPlus ? customBreathingPatterns : {}}
           isActive={isBreathingActive}
         />
       </div>
@@ -469,6 +493,8 @@ const App: React.FC = () => {
           selectedTheme={theme}
           setSelectedTheme={handleThemeSelection}
           icons={appIcons.themeIcons}
+          hasPro={hasPlus}
+          onProToggle={handleShowPlusModal}
         />
       </Modal>
 
@@ -480,6 +506,20 @@ const App: React.FC = () => {
           selectedSoundType={soundType}
           setSelectedSoundType={handleSoundTypeSelection}
           icons={appIcons.soundIcons}
+          hasPro={hasPlus}
+          onProToggle={handleShowPlusModal}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={isPlusModalOpen}
+        onClose={() => setIsPlusModalOpen(false)}
+        showDefaultButton={false}
+      >
+        <PlusPackContent
+          onGetPlus={handlePlusToggle}
+          onClose={() => setIsPlusModalOpen(false)}
+          hasPlus={hasPlus}
         />
       </Modal>
     </div>

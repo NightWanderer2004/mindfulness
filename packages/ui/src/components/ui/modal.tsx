@@ -38,7 +38,7 @@ export const Modal: React.FC<ModalProps> = ({
           <div className='fixed inset-3 lg:inset-0 lg:bottom-[100px] flex items-center justify-center z-10'>
             <motion.div
               className={cn(
-                ' text-center bg-white/85 rounded-3xl lg:rounded-3xl p-3 lg:p-3.5 shadow-smooth border border-white/35',
+                'text-center bg-white/85 rounded-3xl lg:rounded-3xl p-3 lg:p-3.5 shadow-smooth border border-white/35',
                 className,
               )}
               initial={{ opacity: 0, scale: 0.99, y: 8 }}

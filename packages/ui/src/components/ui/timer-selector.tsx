@@ -20,7 +20,7 @@ export const TimerSelector: React.FC<TimerSelectorProps> = ({
           key={timer}
           onClick={() => setSelectedTimer(timer)}
           className={cn(
-            'p-1.5 md:py-2.5 md:px-4 rounded-xl border-2 transition-colors duration-200 w-full',
+            'p-1.5 md:py-2.5 md:px-4 rounded-2xl border-2 transition-colors duration-200 w-full',
             selectedTimer === timer
               ? 'border-primary/30 bg-primary/10 shadow-sm'
               : 'border-transparent hover:bg-primary/5',
