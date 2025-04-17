@@ -29,7 +29,7 @@ export const PlusFeature: React.FC<PlusFeatureProps> = ({
   return (
     <div className={cn('relative overflow-hidden rounded-xl', className)}>
       <div
-        className='absolute inset-0 bg-background/65 backdrop-blur-sm flex flex-col items-center justify-center cursor-pointer z-10'
+        className='absolute inset-0 bg-white/75 backdrop-blur-sm flex flex-col items-center justify-center cursor-pointer z-10'
         onClick={onClick}
       >
         <div className='text-xs font-medium bg-primary/10 px-1.5 py-1 rounded-lg text-primary flex items-center'>

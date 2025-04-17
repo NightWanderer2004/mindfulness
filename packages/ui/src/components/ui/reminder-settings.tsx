@@ -22,7 +22,8 @@ export const ReminderSettings: React.FC<ReminderSettingsProps> = ({
   onProToggle,
 }) => {
   const frequencyOptions = [
-    { value: 30, label: '30 minutes' },
+    { value: 0.083, label: '5 sec' },
+    { value: 30, label: '30 min' },
     { value: 60, label: '1 hour' },
     { value: 120, label: '2 hours' },
     { value: 240, label: '4 hours' },
@@ -51,7 +52,7 @@ export const ReminderSettings: React.FC<ReminderSettingsProps> = ({
         <div className='p-4 bg-primary/5 rounded-xl border border-primary/20'>
           <div className='flex items-center justify-between'>
             <h3 className='text-base font-medium text-primary/90'>
-              Get reminded to take a mindful break
+              Get reminded to take a break
             </h3>
             <label className='relative inline-flex items-center cursor-pointer'>
               <input

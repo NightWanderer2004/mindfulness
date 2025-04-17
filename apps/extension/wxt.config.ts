@@ -21,8 +21,7 @@ export default defineConfig({
     newtab: 'entrypoints/newtab/index.html',
   },
   content: {
-    // Add the reminder content script to all pages
-    reminder: {
+    all: {
       matches: ['<all_urls>'],
       runAt: 'document_idle',
     },

@@ -1,36 +1,10 @@
-import React from "react"
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister"
-import { QueryClient } from "@tanstack/react-query"
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
-import { localExtStorage } from "@webext-core/storage"
-import "@repo/ui/src/style/styles.css"
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      gcTime: 1000 * 60 * 60 * 24
-    }
-  }
-})
-
-const persister = createAsyncStoragePersister({
-  storage: localExtStorage
-})
+import React from 'react'
+import '@repo/ui/src/style/styles.css'
 
 interface BaseAppProps {
   children: React.ReactNode
 }
 
 export function BaseApp({ children }: BaseAppProps) {
-  return (
-    <React.StrictMode>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister }}>
-        {children}
-      </PersistQueryClientProvider>
-    </React.StrictMode>
-  )
+  return <React.StrictMode>{children}</React.StrictMode>
 }
-
-export { queryClient }

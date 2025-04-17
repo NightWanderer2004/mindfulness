@@ -259,8 +259,12 @@ const App: React.FC = () => {
       <div className='absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/5 to-transparent pointer-events-none' />
 
       <div className='absolute flex flex-col gap-2 top-2.5 left-3.5 text-background'>
-        <span className='text-6xl font-semibold'>{formatDate(date)}</span>
-        <span className='text-4xl font-medium'>{formatTime(date)}</span>
+        <span className='text-3xl sm:text-5xl md:text-6xl font-semibold'>
+          {formatDate(date)}
+        </span>
+        <span className='text-xl sm:text-3xl md:text-4xl font-medium'>
+          {formatTime(date)}
+        </span>
       </div>
 
       <div
@@ -306,7 +310,7 @@ const App: React.FC = () => {
       <span className='absolute bottom-2.5 left-3.5 text-4xl leading-none font-sans font-medium bg-gradient-to-br from-background/70 via-background to-background/70 bg-clip-text text-transparent bg-[length:250%_250%] bg-[position:0%_0%] animate-gradient-x'>
         MindfulTab{' '}
         {hasPlus && (
-          <span className='text-base font-semibold text-background align-top'>
+          <span className='text-base font-semibold text-background/85 align-top'>
             Plus
           </span>
         )}

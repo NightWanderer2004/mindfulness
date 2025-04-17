@@ -25,8 +25,12 @@ export const clearStorage = async () => {
     loginStatus: 'idle',
     theme: '',
     soundType: '',
-    reminderType: '',
     meditationTimer: 4,
     sphereType: 'zen',
+    reminder: {
+      enabled: false,
+      frequency: 60,
+      lastShown: null,
+    },
   })
 }
