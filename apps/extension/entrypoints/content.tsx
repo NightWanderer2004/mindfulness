@@ -313,7 +313,7 @@ export default defineContentScript({
   runAt: 'document_end',
 
   async main() {
-    console.log('Mindful Tab: Content script started')
+    console.log('Mindfulness: Content script started')
 
     try {
       const container = document.createElement('div')

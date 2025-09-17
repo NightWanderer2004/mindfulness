@@ -19,7 +19,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   selectedTheme,
   setSelectedTheme,
   icons,
-  hasPro = false,
+  hasPro = true,
   onProToggle,
 }) => {
   // Free themes (default available)

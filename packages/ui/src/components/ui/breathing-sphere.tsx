@@ -70,16 +70,6 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
     animations.breathingPatterns.equal
 
   const dimensions = {
-    outer: {
-      size: `${size}vw`,
-      maxSize: `${size * 12.5}px`,
-      blur: 12,
-      scaleMin: scaleMin,
-      scaleMax: 1,
-      opacityMin: 0.5,
-      opacityMax: 0.8,
-      delay: 0,
-    },
     middleOuter: {
       size: `${size * 0.75}vw`,
       maxSize: `${size * 9.375}px`,
@@ -98,17 +88,17 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
       scaleMax: 1,
       opacityMin: 0.7,
       opacityMax: 0.95,
-      delay: 0.8,
+      delay: 0.6,
     },
     core: {
       size: `${size * 0.25}vw`,
-      maxSize: `${size * 3.125}px`,
+      maxSize: `${size * 4.25}px`,
       blur: 4,
       scaleMin: scaleMin,
       scaleMax: 1,
       opacityMin: 0.8,
       opacityMax: 1,
-      delay: 1.2,
+      delay: 1,
     },
   }
 
@@ -215,7 +205,6 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
       )}
       style={{ transform: 'translateZ(0px)' }} // Force hardware acceleration
     >
-      {renderSphere(dimensions.outer)}
       {renderSphere(dimensions.middleOuter)}
       {renderSphere(dimensions.middleInner)}
       {renderSphere(dimensions.core)}

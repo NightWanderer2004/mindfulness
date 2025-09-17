@@ -15,7 +15,6 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
 }) => {
   const size = 105
   const blurAmount = 6
-  const raySize = 1
 
   const [isHolding, setIsHolding] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -113,7 +112,7 @@ export const HoldSphere: React.FC<HoldSphereProps> = ({
 
   useEffect(() => {
     if (complete) onComplete()
-  }, [complete, onComplete])
+  }, [complete])
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown)

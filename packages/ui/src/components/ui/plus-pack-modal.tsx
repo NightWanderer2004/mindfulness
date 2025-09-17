@@ -12,7 +12,7 @@ interface PlusPackModalProps {
 export const PlusPackContent: React.FC<PlusPackModalProps> = ({
   onGetPlus,
   onClose,
-  hasPlus = false,
+  hasPlus = true,
 }) => {
   if (!hasPlus) {
     return (
@@ -63,7 +63,7 @@ export const PlusPackContent: React.FC<PlusPackModalProps> = ({
         Plus Pack Enabled
       </h2>
       <p className='text-primary/85 text-base mb-1.5'>
-        You're enjoying the mindful features of MindfulTab. You can disable the
+        You're enjoying the mindful features of Mindfulness. You can disable the
         Plus Pack at any time if you want
       </p>
 

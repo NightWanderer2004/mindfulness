@@ -63,10 +63,7 @@ const migrateState = (state: any): any => {
     state.sphereType = state.reminderType
   }
 
-  // Add new properties for migration from older versions
-  if (state && !state.hasPlus) {
-    state.hasPlus = false
-  }
+  // Ensure hasPlus exists; legacy states forced to true
 
   if (state && !state.reminder) {
     state.reminder = {
@@ -80,10 +77,9 @@ const migrateState = (state: any): any => {
     state.customBreathingPatterns = {}
   }
 
-  // Migrate from hasPro to hasPlus if needed
-  if (state && state.hasPro !== undefined && state.hasPlus === undefined) {
-    state.hasPlus = state.hasPro
-    delete state.hasPro
+  // Force Plus enabled across all versions
+  if (state) {
+    state.hasPlus = true
   }
 
   return state
@@ -97,7 +93,7 @@ const createVanillaStore = () =>
         count: 0,
         secretText: undefined,
         loginStatus: 'idle',
-        hasPlus: false,
+        hasPlus: true,
         reminder: {
           enabled: false,
           frequency: 60, // Default to hourly reminders
@@ -111,10 +107,10 @@ const createVanillaStore = () =>
         meditationTimer: 4,
         setUser: user => set({ user }),
         setLoginStatus: loginStatus => set({ loginStatus }),
-        togglePlus: () => set(state => ({ hasPlus: !state.hasPlus })),
+        togglePlus: () => set(() => ({ hasPlus: true })),
         resetPlusFeatures: () =>
           set(state => ({
-            hasPlus: false,
+            hasPlus: true,
             theme: 'Softness',
             soundType: 'Ambient',
             breathingPattern: 'Equal',
@@ -179,6 +175,7 @@ const createVanillaStore = () =>
       {
         name: 'applicationState',
         storage: createJSONStorage(() => webextStorage),
+        version: 1,
         partialize: state => ({
           user: state.user,
           count: state.count,

@@ -11,7 +11,7 @@ interface ContentScriptMessage {
 
 let isInitialized = false
 export default defineBackground(() => {
-  console.log('Mindful Tab background script initialized')
+  console.log('Mindfulness background script initialized')
   registerExampleService()
 
   // Set up an alarm to show the breathing sphere every 3 seconds (for development)

@@ -7,7 +7,10 @@ import { TransitionPanel } from '@repo/ui/components/ui/transition-panel'
 import { HoldSphere } from '@repo/ui/components/ui/hold-sphere'
 import { motion } from 'framer-motion'
 import { animations, transitionSmooth, appIcons } from '@repo/ui/src/lib/utils'
-import { useApplicationStore } from '../../src/bg/state'
+import {
+  useApplicationStore,
+  applicationStoreReadyPromise,
+} from '../../src/bg/state'
 
 const steps = [
   {
@@ -36,21 +39,60 @@ const App: React.FC = () => {
   const [isSoundModalOpen, setIsSoundModalOpen] = useState<boolean>(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [direction, setDirection] = useState(1)
-  const [setupComplete, setSetupComplete] = useState(false)
+
+  const openNewTabAndCloseCurrent = () => {
+    try {
+      const chromeAPI =
+        typeof window !== 'undefined' ? (window as any).chrome : undefined
+      if (chromeAPI?.tabs) {
+        chromeAPI.tabs.query(
+          { active: true, currentWindow: true },
+          (tabs: any[]) => {
+            const currentTabId = tabs?.[0]?.id
+            chromeAPI.tabs.create({}, () => {
+              if (currentTabId) {
+                chromeAPI.tabs.remove(currentTabId)
+              } else if (typeof window !== 'undefined') {
+                window.close()
+              }
+            })
+          },
+        )
+        return
+      }
+    } catch {}
+
+    if (typeof window !== 'undefined') {
+      window.close()
+    }
+  }
+
+  // Always start install flow fresh on visit
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        await applicationStoreReadyPromise
+        setTheme('')
+        setSoundType('')
+        if (!cancelled) {
+          setSelectedTheme(null)
+          setSelectedSoundType(null)
+          setDirection(1)
+          setActiveIndex(0)
+        }
+      } catch (e) {
+        // no-op
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const getCurrentStep = (): number => {
     return activeIndex
-  }
-
-  const handleSetupComplete = () => setSetupComplete(true)
-
-  const handleCloseTab = () => {
-    window.close()
-  }
-
-  const handleSetActiveIndex = (newIndex: number) => {
-    setDirection(newIndex > activeIndex ? 1 : -1)
-    setActiveIndex(newIndex)
   }
 
   useEffect(() => {
@@ -66,12 +108,6 @@ const App: React.FC = () => {
       setActiveIndex(2)
     }
   }, [selectedSoundType])
-
-  useEffect(() => {
-    if (setupComplete && activeIndex === 2) {
-      handleCloseTab()
-    }
-  }, [setupComplete, activeIndex])
 
   const handleGoBack = () => {
     const currentStep = getCurrentStep()
@@ -199,9 +235,7 @@ const App: React.FC = () => {
         customContent: (
           <HoldSphere
             holdDuration={2200}
-            onComplete={() => {
-              handleSetupComplete()
-            }}
+            onComplete={openNewTabAndCloseCurrent}
           />
         ),
       },
@@ -278,7 +312,7 @@ const App: React.FC = () => {
         className='z-20 w-full max-w-sm mx-auto'
       >
         <h1 className='mb-2.5 text-6xl leading-none text-center font-sans font-semibold bg-gradient-to-br from-background/90 via-background/65 to-background/55 bg-clip-text text-transparent bg-[length:250%_250%] bg-[position:0%_0%]'>
-          MindfulTab
+          Mindfulness
         </h1>
 
         <div className='relative ' style={{ minHeight: '200px' }}>
@@ -337,6 +371,7 @@ const App: React.FC = () => {
             setIsSoundModalOpen(false)
           }}
           icons={appIcons.soundIcons}
+          hasPro={true}
         />
       </Modal>
     </div>

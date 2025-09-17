@@ -11,7 +11,7 @@ interface MeditateButtonProps {
 
 export const MeditateButton: React.FC<MeditateButtonProps> = ({
   icon,
-  label = 'Begin',
+  label = 'Relax Now',
   onClick,
   className,
 }) => {

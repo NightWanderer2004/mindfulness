@@ -55,7 +55,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
           max={max}
           value={value}
           onChange={handleChange}
-          className='w-auto pl-3 py-0.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background/50 text-sm text-center'
+          className='appearance-none w-auto pl-3 py-0.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background/50 text-sm text-center'
         />
         <span className='text-base mb-0.5 text-primary/90'>sec</span>
       </div>
@@ -146,12 +146,12 @@ export const CustomBreathingPattern: React.FC<CustomBreathingPatternProps> = ({
           onChange={handleNameChange}
           maxLength={8}
           className={cn(
-            'w-full font-medium px-3 py-2 border border-primary/20 rounded-xl placeholder:text-sm text-sm bg-background/50 transition-all duration-300',
+            'w-full font-medium px-3 py-1 border border-primary/20 rounded-xl placeholder:text-sm text-sm bg-background/50 transition-all duration-300',
             name && !isNameValid
               ? 'border-red-500 outline-none ring-red-500'
               : 'focus:outline-none focus:ring-primary/30',
           )}
-          placeholder='My Pattern'
+          placeholder='After study chill'
         />
       </div>
 

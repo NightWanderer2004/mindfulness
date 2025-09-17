@@ -12,9 +12,8 @@ import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
 import { TabModal } from '@repo/ui/components/ui/tab-modal'
 import { TimerSelector } from '@repo/ui/components/ui/timer-selector'
 import { BreathingPatternSelector } from '@repo/ui/components/ui/breathing-pattern-selector'
-import { ReminderSettings } from '@repo/ui/components/ui/reminder-settings'
 import { Modal } from '@repo/ui/components/ui/modal'
-import { PlusPackContent } from '@repo/ui/components/ui/plus-pack-modal'
+// import { PlusPackContent } from '@repo/ui/components/ui/plus-pack-modal'
 
 const App: React.FC = () => {
   const [date, setDate] = useState<Date>(new Date())
@@ -35,11 +34,6 @@ const App: React.FC = () => {
   )
   const removeCustomBreathingPattern = useApplicationStore(
     state => state.removeCustomBreathingPattern,
-  )
-  const reminder = useApplicationStore(state => state.reminder)
-  const toggleReminder = useApplicationStore(state => state.toggleReminder)
-  const setReminderFrequency = useApplicationStore(
-    state => state.setReminderFrequency,
   )
 
   const setTheme = useApplicationStore(state => state.setTheme)
@@ -238,19 +232,6 @@ const App: React.FC = () => {
         />
       ),
     },
-    {
-      name: 'Reminders',
-      key: 'reminders',
-      panel: (
-        <ReminderSettings
-          settings={reminder}
-          onToggle={toggleReminder}
-          onChangeFrequency={setReminderFrequency}
-          hasPro={hasPlus}
-          onProToggle={handleShowPlusModal}
-        />
-      ),
-    },
   ]
 
   return (
@@ -273,7 +254,7 @@ const App: React.FC = () => {
           'absolute top-2.5 right-3.5 gap-2 p-2 bg-background/90 border-[1.5px] border-white/20 shadow-smooth backdrop-blur-sm rounded-3xl',
         )}
       >
-        <div title='Begin Meditation'>
+        <div title='Relax Now'>
           <AnimatedButton
             isAnimated
             iconOnly
@@ -298,22 +279,22 @@ const App: React.FC = () => {
             onClick={() => setIsSettingsModalOpen(true)}
           />
         </div>
-        <div title={hasPlus ? 'Plus Pack Features Enabled' : 'Get Plus Pack'}>
+        {/* <div title={hasPlus ? 'Plus Pack Features Enabled' : 'Get Plus Pack'}>
           <AnimatedButton
             iconOnly
             label={hasPlus ? 'Plus Pack Enabled' : 'Get Plus Pack'}
             icon={appIcons.utility.pro}
             onClick={() => setIsPlusModalOpen(true)}
           />
-        </div>
+        </div> */}
       </div>
       <span className='absolute bottom-2.5 left-3.5 text-4xl leading-none font-sans font-medium bg-gradient-to-br from-background/70 via-background to-background/70 bg-clip-text text-transparent bg-[length:250%_250%] bg-[position:0%_0%] animate-gradient-x'>
-        MindfulTab{' '}
-        {hasPlus && (
+        Mindfulness{' '}
+        {/* {hasPlus && (
           <span className='text-base font-semibold text-background/85 align-top'>
             Plus
           </span>
-        )}
+        )} */}
       </span>
       <TabModal
         isOpen={isThemeModalOpen}
@@ -325,7 +306,7 @@ const App: React.FC = () => {
         onClose={() => setIsSettingsModalOpen(false)}
         tabs={settingsTabs}
       />
-      <Modal
+      {/* <Modal
         isOpen={isPlusModalOpen}
         onClose={() => setIsPlusModalOpen(false)}
         showDefaultButton={false}
@@ -335,7 +316,7 @@ const App: React.FC = () => {
           onClose={() => setIsPlusModalOpen(false)}
           hasPlus={hasPlus}
         />
-      </Modal>
+      </Modal> */}
     </div>
   )
 }

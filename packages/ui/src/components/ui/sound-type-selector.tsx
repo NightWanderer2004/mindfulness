@@ -11,7 +11,7 @@ interface SoundTypeSelectorProps {
   selectedSoundType: string | null
   setSelectedSoundType?: (soundType: string) => void
   icons: IconsMap
-  hasPro?: boolean
+  hasPro: boolean
   onProToggle?: () => void
 }
 
@@ -19,7 +19,7 @@ export const SoundTypeSelector: React.FC<SoundTypeSelectorProps> = ({
   selectedSoundType,
   setSelectedSoundType,
   icons,
-  hasPro = false,
+  hasPro = true,
   onProToggle,
 }) => {
   const freeSounds = [

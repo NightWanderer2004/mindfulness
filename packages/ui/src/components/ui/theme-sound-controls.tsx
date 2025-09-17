@@ -11,6 +11,7 @@ export interface ThemeSoundControlsProps {
   onThemeClick: () => void
   onSoundClick: () => void
   onHoverStateChange?: (isHovering: boolean) => void
+  onEndSession?: () => void
 }
 
 export const ThemeSoundControls: React.FC<ThemeSoundControlsProps> = ({
@@ -21,6 +22,7 @@ export const ThemeSoundControls: React.FC<ThemeSoundControlsProps> = ({
   onThemeClick,
   onSoundClick,
   onHoverStateChange,
+  onEndSession,
 }) => {
   const [isHovering, setIsHovering] = useState<boolean>(false)
 
@@ -59,7 +61,7 @@ export const ThemeSoundControls: React.FC<ThemeSoundControlsProps> = ({
         </motion.div>
 
         <motion.div
-          className='flex items-end justify-center gap-5'
+          className='flex items-end justify-center gap-3'
           initial={{ y: 55 }}
           animate={{ y: isHovering ? 0 : 55 }}
           transition={{ duration: 0.5, ease: animations.easing.smooth }}
@@ -70,6 +72,13 @@ export const ThemeSoundControls: React.FC<ThemeSoundControlsProps> = ({
             icon={getThemeIcon()}
             onClick={onThemeClick}
           />
+          {onEndSession && (
+            <AnimatedButton
+              className='w-fit !bg-orange-600/90 !text-white border-orange-600/45'
+              label={'End'}
+              onClick={onEndSession}
+            />
+          )}
           <AnimatedButton
             className='max-w-[180px] !bg-background/90'
             label={soundType ? `${soundType}` : 'Choose Sound'}

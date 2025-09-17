@@ -71,11 +71,6 @@ export const BreathingPatternSelector: React.FC<
 
   // Toggle custom pattern form
   const toggleCustomForm = () => {
-    if (!hasPro) {
-      // If not Pro, show upgrade dialog
-      if (onProToggle) onProToggle()
-      return
-    }
     setShowCustomForm(!showCustomForm)
   }
 
@@ -132,8 +127,7 @@ export const BreathingPatternSelector: React.FC<
       >
         <div
           className={cn(
-            'p-2.5 bg-primary/5 rounded-2xl border-2 shadow-smooth transition-colors duration-200',
-            showCustomForm ? 'border-primary/30' : 'border-primary/15',
+            'p-2.5 bg-primary/5 rounded-2xl shadow-sm transition-colors duration-200',
           )}
         >
           <div className='flex items-center justify-between'>

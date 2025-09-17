@@ -131,12 +131,16 @@ export const MeditationTimer: React.FC<MeditationTimerProps> = ({
           )}
           aria-label='Reset timer'
         >
-          <img src={RepeatIcon} alt='Refresh' className='size-[21px]' />
+          <img
+            src={RepeatIcon}
+            alt='Refresh'
+            className='size-[21px] pointer-events-none'
+          />
         </button>
 
         <div
           className={cn(
-            'text-[28px] leading-none font-medium tabular-nums border-x-[1.5px] border-background/35 py-2 px-2.5',
+            'text-[28px] leading-none font-medium tabular-nums py-2 px-2.5',
             themeColor,
           )}
         >
@@ -152,9 +156,17 @@ export const MeditationTimer: React.FC<MeditationTimerProps> = ({
           aria-label={isTimerActive ? 'Pause timer' : 'Resume timer'}
         >
           {isTimerActive ? (
-            <img src={PauseIcon} alt='Pause' className='size-5' />
+            <img
+              src={PauseIcon}
+              alt='Pause'
+              className='size-5 pointer-events-none'
+            />
           ) : (
-            <img src={PlayIcon} alt='Play' className='size-5' />
+            <img
+              src={PlayIcon}
+              alt='Play'
+              className='size-5 pointer-events-none'
+            />
           )}
         </button>
       </div>

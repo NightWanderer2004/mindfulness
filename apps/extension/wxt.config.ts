@@ -9,7 +9,7 @@ export default defineConfig({
   manifest: {
     permissions: ['storage', 'tabs', 'alarms', 'scripting'],
     host_permissions: ['<all_urls>'],
-    name: 'Mindful Tab',
+    name: 'Mindfulness',
     web_accessible_resources: [
       {
         resources: ['entrypoints/**/*', 'assets/**/*'],

@@ -8,8 +8,8 @@ import { ThemeSoundControls } from '@repo/ui/components/ui/theme-sound-controls'
 import { BreathingSphere } from '@repo/ui/components/ui/breathing-sphere'
 import { FlashScreen } from '@repo/ui/components/ui/flash-screen'
 import { MeditationTimer } from '@repo/ui/components/ui/meditation-timer'
-import { appIcons, cn } from '@repo/ui/src/lib/utils'
-import { PlusPackContent } from '@repo/ui/components/ui/plus-pack-modal'
+import { appIcons, cn, type ChromeTab } from '@repo/ui/src/lib/utils'
+// import { PlusPackContent } from '@repo/ui/components/ui/plus-pack-modal'
 
 type ImageImport = {
   default: string
@@ -123,7 +123,6 @@ const App: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const isAudioTransitioning = useRef<boolean>(false)
 
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const backgroundRef = useRef<HTMLDivElement>(null)
   const autoChangeIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -162,6 +161,43 @@ const App: React.FC = () => {
     }
   }, [])
 
+  const handleEndSession = useCallback(() => {
+    const openNewTabAndCloseCurrent = () => {
+      try {
+        const chromeAPI =
+          typeof window !== 'undefined' ? window.chrome : undefined
+        if (chromeAPI?.tabs) {
+          chromeAPI.tabs.query(
+            { active: true, currentWindow: true },
+            (tabs: ChromeTab[]) => {
+              const currentTabId = tabs?.[0]?.id
+              chromeAPI.tabs.create({}, () => {
+                if (currentTabId) {
+                  chromeAPI.tabs.remove(currentTabId)
+                } else if (typeof window !== 'undefined') {
+                  window.close()
+                }
+              })
+            },
+          )
+          return
+        }
+      } catch {}
+
+      if (typeof window !== 'undefined') {
+        window.close()
+      }
+    }
+
+    if (audioRef.current) {
+      stopAudioSmoothly(audioRef.current, true).finally(
+        openNewTabAndCloseCurrent,
+      )
+    } else {
+      openNewTabAndCloseCurrent()
+    }
+  }, [])
+
   const stopAudioSmoothly = async (
     audio: HTMLAudioElement,
     shouldFade = true,
@@ -190,25 +226,6 @@ const App: React.FC = () => {
       }
     })
   }
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (backgroundRef.current) {
-        const { clientX, clientY } = e
-        const { innerWidth, innerHeight } = window
-
-        const x = (clientX / innerWidth) * 100
-        const y = (clientY / innerHeight) * 100
-
-        setMousePosition({ x, y })
-      }
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove)
-    }
-  }, [])
 
   useEffect(() => {
     if (!theme) {
@@ -380,9 +397,6 @@ const App: React.FC = () => {
     }
   }, [theme, soundType, currentTrackNumber])
 
-  const parallaxX = (50 - mousePosition.x) * movementMultiplier
-  const parallaxY = (50 - mousePosition.y) * movementMultiplier
-
   const handleThemeSelection = (selectedTheme: string) => {
     setTheme(selectedTheme)
     setIsThemeModalOpen(false)
@@ -430,7 +444,6 @@ const App: React.FC = () => {
       className='overflow-hidden flex min-h-screen flex-col items-center justify-between bg-background bg-no-repeat bg-cover'
       style={{
         backgroundImage: backgroundUrl,
-        backgroundPosition: `calc(50% + ${parallaxX}px) calc(50% + ${parallaxY}px)`,
         transition: 'background-image 0.75s ease-out',
       }}
     >
@@ -482,6 +495,7 @@ const App: React.FC = () => {
           onThemeClick={() => setIsThemeModalOpen(true)}
           onSoundClick={() => setIsSoundModalOpen(true)}
           onHoverStateChange={setIsBottomAreaHovering}
+          onEndSession={handleEndSession}
         />
       </div>
 
@@ -511,7 +525,7 @@ const App: React.FC = () => {
         />
       </Modal>
 
-      <Modal
+      {/* <Modal
         isOpen={isPlusModalOpen}
         onClose={() => setIsPlusModalOpen(false)}
         showDefaultButton={false}
@@ -521,7 +535,7 @@ const App: React.FC = () => {
           onClose={() => setIsPlusModalOpen(false)}
           hasPlus={hasPlus}
         />
-      </Modal>
+      </Modal> */}
     </div>
   )
 }

@@ -11,7 +11,7 @@ interface PlusFeatureProps {
 
 export const PlusFeature: React.FC<PlusFeatureProps> = ({
   children,
-  isPro,
+  isPro = true,
   feature,
   onClick,
   className,
@@ -22,7 +22,7 @@ export const PlusFeature: React.FC<PlusFeatureProps> = ({
     themes: 'Item',
   }
 
-  if (isPro) {
+  if (true) {
     return <div className={className}>{children}</div>
   }
 

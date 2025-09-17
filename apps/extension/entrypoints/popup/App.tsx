@@ -7,7 +7,6 @@ import { TimerSelector } from '@repo/ui/components/ui/timer-selector'
 import { ThemeSelector } from '@repo/ui/components/ui/theme-selector'
 import { SoundTypeSelector } from '@repo/ui/components/ui/sound-type-selector'
 import { BreathingPatternSelector } from '@repo/ui/components/ui/breathing-pattern-selector'
-import { ReminderSettings } from '@repo/ui/components/ui/reminder-settings'
 import { useApplicationStore } from '../../src/bg/state'
 import {
   appIcons,
@@ -15,8 +14,7 @@ import {
   checkSessionStatus,
   animations,
 } from '@repo/ui/src/lib/utils'
-import { motion } from 'framer-motion'
-import { PlusPackContent } from '@repo/ui/components/ui/plus-pack-modal'
+// import { PlusPackContent } from '@repo/ui/components/ui/plus-pack-modal'
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -36,11 +34,6 @@ const App: React.FC = () => {
   const hasPlus = useApplicationStore(state => state.hasPlus)
   const resetPlusFeatures = useApplicationStore(
     state => state.resetPlusFeatures,
-  )
-  const reminder = useApplicationStore(state => state.reminder)
-  const toggleReminder = useApplicationStore(state => state.toggleReminder)
-  const setReminderFrequency = useApplicationStore(
-    state => state.setReminderFrequency,
   )
 
   const setStoredTheme = useApplicationStore(state => state.setTheme)
@@ -194,23 +187,10 @@ const App: React.FC = () => {
         />
       ),
     },
-    {
-      name: 'Reminders',
-      key: 'reminders',
-      panel: (
-        <ReminderSettings
-          settings={reminder}
-          onToggle={toggleReminder}
-          onChangeFrequency={setReminderFrequency}
-          hasPro={hasPlus}
-          onProToggle={handleShowPlusModal}
-        />
-      ),
-    },
   ]
 
   return (
-    <div className='relative w-[330px] py-7 px-11 overflow-hidden flex flex-col items-center justify-center text-white'>
+    <div className='relative w-[340px] py-7 px-11 overflow-hidden flex flex-col items-center justify-center text-white'>
       <div className='absolute pointer-events-none inset-0 bg-sky-bg-popup bg-cover bg-center filter brightness-90' />
       <div
         className={cn(
@@ -219,7 +199,7 @@ const App: React.FC = () => {
         )}
       >
         <h1 className='mt-1 text-4xl leading-none text-center font-sans font-semibold bg-gradient-to-br from-primary/70 via-primary to-primary bg-clip-text text-transparent bg-[length:200%_200%] bg-[position:0%_0%]'>
-          MindfulTab
+          Mindfulness
         </h1>
 
         {isSessionActive ? (
@@ -243,13 +223,13 @@ const App: React.FC = () => {
                 icon={appIcons.utility.cogwheel}
                 onClick={() => setIsSettingsOpen(true)}
               />
-              {!hasPlus && (
+              {/* {!hasPlus && (
                 <AnimatedButton
                   label='Get Plus Pack'
                   icon={appIcons.utility.pro}
                   onClick={handleShowPlusModal}
                 />
-              )}
+              )} */}
             </div>
           </div>
         )}
@@ -267,7 +247,7 @@ const App: React.FC = () => {
         tabs={settingsTabs}
       />
 
-      <Modal
+      {/* <Modal
         isOpen={isPlusModalOpen}
         onClose={() => setIsPlusModalOpen(false)}
         showDefaultButton={false}
@@ -277,7 +257,7 @@ const App: React.FC = () => {
           onClose={() => setIsPlusModalOpen(false)}
           hasPlus={hasPlus}
         />
-      </Modal>
+      </Modal> */}
     </div>
   )
 }

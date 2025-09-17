@@ -10,11 +10,11 @@ const config: Pick<Config, 'content' | 'presets' | 'important' | 'theme'> = {
   theme: {
     extend: {
       colors: {
-        primary: '#5093CB',
-        background: '#F4F6FC',
+        primary: 'oklch(0.67 0.135 246 / <alpha-value>)',
+        background: 'oklch(0.98 0.0025 246 / <alpha-value>)',
         text: {
-          primary: '#344959',
-          secondary: '#757575',
+          primary: 'oklch(0.44 0.0777 242 / <alpha-value>)',
+          secondary: 'oklch(0.75 0.025 242 / <alpha-value>)',
         },
       },
       boxShadow: {
