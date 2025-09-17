@@ -103,7 +103,7 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
   }
 
   // Create keyframes based on breathing pattern
-  const createBreathingKeyframes = (config: typeof dimensions.outer) => {
+  const createBreathingKeyframes = (config: typeof dimensions.middleOuter) => {
     const { inhale, exhale, hold, holdAfterExhale } = pattern
     const totalDuration = pattern.duration
 
@@ -163,7 +163,7 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
     },
   }
 
-  const renderSphere = (config: typeof dimensions.outer) => {
+  const renderSphere = (config: typeof dimensions.middleOuter) => {
     const keyframes = createBreathingKeyframes(config)
 
     return (
