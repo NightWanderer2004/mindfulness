@@ -27,7 +27,7 @@ const themeColors = {
   Harmony: 'text-amber-500/90',
   Wandering: 'text-blue-400/90',
   Openness: 'text-lime-500/90',
-  Confidence: 'text-emerald-500/90',
+  Confident: 'text-emerald-500/90',
   Softness: 'text-blue-400/90',
   Tiredness: 'text-red-400/90',
 }

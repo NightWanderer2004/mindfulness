@@ -57,7 +57,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
           onChange={handleChange}
           className='appearance-none w-auto pl-3 py-0.5 border border-primary/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 bg-background/50 text-sm text-center'
         />
-        <span className='text-base mb-0.5 text-primary/90'>sec</span>
+        <span className='text-base mb-0.5 text-primary/90'>ticks</span>
       </div>
     </div>
   )

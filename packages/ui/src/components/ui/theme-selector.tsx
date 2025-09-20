@@ -57,8 +57,8 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
       text: 'text-blue-600/50',
     },
     {
-      name: 'Confidence',
-      icon: icons.confidence,
+      name: 'Confident',
+      icon: icons.confident,
       color: 'border-emerald-300/30 bg-emerald-200/20',
       hover: 'hover:border-emerald-300/20 hover:bg-emerald-100/20',
       text: 'text-emerald-600/50',
@@ -79,7 +79,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
       whileTap={animations.button.whileTap}
       transition={animations.button.transition}
       className={cn(
-        'p-1.5 lg:py-3 lg:px-2.5 rounded-2xl border-2 transition-colors duration-200 w-full flex lg:block items-center gap-2.5 justify-start',
+        'p-1.5 lg:py-3 lg:px-2.5 rounded-2xl border-2 transition-colors duration-200 w-full flex lg:block items-center gap-2 justify-start',
         selectedTheme === theme.name
           ? `${theme.color} shadow-smooth`
           : `border-transparent ${theme.hover}`,
@@ -90,7 +90,7 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({
         <img
           src={theme.icon}
           alt={theme.name}
-          className='size-7 lg:size-16 object-contain pointer-events-none'
+          className='size-7 min-w-7 lg:size-16 object-contain pointer-events-none'
         />
       </div>
       <span className={cn('text-base font-medium', theme.text)}>

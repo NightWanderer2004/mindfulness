@@ -19,7 +19,7 @@ type ThemeType =
   | 'harmony'
   | 'wandering'
   | 'openness'
-  | 'confidence'
+  | 'confident'
   | 'softness'
   | 'tiredness'
 
@@ -60,10 +60,10 @@ const imageMap: Record<
     2: () => import('../../assets/wall/openness-2.png'),
     3: () => import('../../assets/wall/openness-3.png'),
   },
-  confidence: {
-    1: () => import('../../assets/wall/confidence-1.png'),
-    2: () => import('../../assets/wall/confidence-2.png'),
-    3: () => import('../../assets/wall/confidence-3.png'),
+  confident: {
+    1: () => import('../../assets/wall/confident-1.png'),
+    2: () => import('../../assets/wall/confident-2.png'),
+    3: () => import('../../assets/wall/confident-3.png'),
   },
   softness: {
     1: () => import('../../assets/wall/softness-1.png'),
@@ -130,37 +130,6 @@ const App: React.FC = () => {
     setShowFlashScreen(true)
   }, [])
 
-  const handleFlashComplete = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      window.close()
-    }
-  }, [])
-
-  const handlePauseBreathing = useCallback(() => {
-    setIsBreathingActive(false)
-  }, [])
-
-  const handleResumeBreathing = useCallback(() => {
-    setIsBreathingActive(true)
-  }, [])
-
-  const handleFadeAudioNearEnd = useCallback(() => {
-    if (audioRef.current && audioRef.current.volume > 0.1) {
-      // Gradually fade out over 3 seconds
-      const fadeOutInterval = setInterval(() => {
-        if (audioRef.current) {
-          if (audioRef.current.volume > 0.1) {
-            audioRef.current.volume -= 0.1
-          } else {
-            clearInterval(fadeOutInterval)
-          }
-        } else {
-          clearInterval(fadeOutInterval)
-        }
-      }, 300)
-    }
-  }, [])
-
   const handleEndSession = useCallback(() => {
     const openNewTabAndCloseCurrent = () => {
       try {
@@ -195,6 +164,36 @@ const App: React.FC = () => {
       )
     } else {
       openNewTabAndCloseCurrent()
+    }
+  }, [])
+
+  const handleFlashComplete = useCallback(() => {
+    // Reuse the same logic as manual end: stop audio, open new tab, close current
+    handleEndSession()
+  }, [handleEndSession])
+
+  const handlePauseBreathing = useCallback(() => {
+    setIsBreathingActive(false)
+  }, [])
+
+  const handleResumeBreathing = useCallback(() => {
+    setIsBreathingActive(true)
+  }, [])
+
+  const handleFadeAudioNearEnd = useCallback(() => {
+    if (audioRef.current && audioRef.current.volume > 0.1) {
+      // Gradually fade out over 3 seconds
+      const fadeOutInterval = setInterval(() => {
+        if (audioRef.current) {
+          if (audioRef.current.volume > 0.1) {
+            audioRef.current.volume -= 0.1
+          } else {
+            clearInterval(fadeOutInterval)
+          }
+        } else {
+          clearInterval(fadeOutInterval)
+        }
+      }, 300)
     }
   }, [])
 

@@ -74,7 +74,7 @@ export const ThemeSoundControls: React.FC<ThemeSoundControlsProps> = ({
           />
           {onEndSession && (
             <AnimatedButton
-              className='w-fit !bg-orange-600/90 !text-white border-orange-600/45'
+              className='w-fit !bg-orange-600/70 !text-white border-orange-600/35'
               label={'End'}
               onClick={onEndSession}
             />

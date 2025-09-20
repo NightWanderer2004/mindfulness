@@ -18,6 +18,8 @@ interface BreathingSphereProps {
   scaleMin?: number
   isActive?: boolean
   customPatterns?: Record<string, BreathingPatternConfig>
+  // Tick duration in milliseconds. Breathing pattern values are measured in ticks.
+  tickMs?: number
 }
 
 // Note: themeColorsGradient is defined locally instead of importing from utils
@@ -32,7 +34,7 @@ const themeColorsGradient = {
   openness: {
     gradient: 'from-lime-300 via-lime-200 to-lime-50',
   },
-  confidence: {
+  confident: {
     gradient: 'from-green-300 via-green-200 to-green-50',
   },
   softness: {
@@ -51,6 +53,7 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
   scaleMin = 0.25,
   isActive = true,
   customPatterns = {},
+  tickMs = 575,
 }) => {
   const themeKey = theme?.toLowerCase() || 'openness'
   const patternKey = breathingPattern?.toLowerCase() || 'equal'
@@ -105,12 +108,13 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
   // Create keyframes based on breathing pattern
   const createBreathingKeyframes = (config: typeof dimensions.middleOuter) => {
     const { inhale, exhale, hold, holdAfterExhale } = pattern
-    const totalDuration = pattern.duration
+    // Interpret pattern values as ticks
+    const totalTicks = pattern.duration
 
     // Calculate time points for animation keyframes (0 to 1 scale)
-    const inhaleFraction = inhale / totalDuration
-    const holdFraction = hold / totalDuration
-    const exhaleFraction = exhale / totalDuration
+    const inhaleFraction = inhale / totalTicks
+    const holdFraction = hold / totalTicks
+    const exhaleFraction = exhale / totalTicks
 
     // Accumulate for keyframe positions
     const inhaleDone = inhaleFraction
@@ -158,7 +162,8 @@ export const BreathingSphere: React.FC<BreathingSphereProps> = ({
   const breathingAnimation = {
     transition: {
       repeat: Infinity,
-      duration: pattern.duration,
+      // Convert ticks to seconds
+      duration: (pattern.duration * tickMs) / 1000,
       ease: animations.easing.breathing,
     },
   }

@@ -190,11 +190,11 @@ const App: React.FC = () => {
   ]
 
   return (
-    <div className='relative w-[340px] py-7 px-11 overflow-hidden flex flex-col items-center justify-center text-white'>
+    <div className='relative w-[320px] p-4 py-5 overflow-hidden flex flex-col items-center justify-center'>
       <div className='absolute pointer-events-none inset-0 bg-sky-bg-popup bg-cover bg-center filter brightness-90' />
       <div
         className={cn(
-          'relative z-10 bg-background/90 border-[1.5px] border-primary/20 shadow-smooth backdrop-blur-sm h-full w-full flex flex-col rounded-3xl p-4',
+          'relative z-10 bg-background/90 border-[1.5px] border-primary/20 shadow-smooth backdrop-blur-sm h-full w-full flex flex-col rounded-3xl p-3',
           isSessionActive ? 'gap-3' : 'gap-4',
         )}
       >
@@ -204,7 +204,7 @@ const App: React.FC = () => {
 
         {isSessionActive ? (
           <p className='text-primary/85 text-base text-center font-medium'>
-            You're already in session
+            You're already relaxing, enjoy
           </p>
         ) : (
           <div className='space-y-4'>

@@ -64,7 +64,9 @@ export const SoundTypeSelector: React.FC<SoundTypeSelectorProps> = ({
         <img
           src={icons[soundType.name.toLowerCase()]}
           alt={soundType.name}
-          className={cn('size-7 lg:size-16 object-contain pointer-events-none')}
+          className={cn(
+            'size-7 min-w-7 lg:size-16 object-contain pointer-events-none',
+          )}
         />
       </div>
       <span className={cn('text-base font-medium', soundType.text)}>
