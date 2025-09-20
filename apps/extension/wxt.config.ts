@@ -7,8 +7,8 @@ import { resolve } from 'path'
 
 export default defineConfig({
   manifest: {
-    permissions: ['storage', 'tabs', 'alarms', 'scripting'],
-    host_permissions: ['<all_urls>'],
+    permissions: ['storage', 'sessions', 'tabs', 'alarms', 'scripting'],
+    host_permissions: ['https://www.google-analytics.com/'],
     name: 'Mindfulness',
     web_accessible_resources: [
       {

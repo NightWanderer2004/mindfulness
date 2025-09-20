@@ -5,6 +5,7 @@
     "strict": true,
     "rootDir": ".",
     "jsx": "react-jsx",
+    "types": ["chrome"],
     "paths": {
       "@/*": ["./src/*"],
       "@entrypoints/*": ["./entrypoints/*"],
@@ -15,6 +16,7 @@
     "./src/**/*",
     "./entrypoints/**/*",
     "./entrypoints/background.ts",
+    "./types.d.ts",
     "./.wxt/**/*",
     "search-db.ts"
   ],
