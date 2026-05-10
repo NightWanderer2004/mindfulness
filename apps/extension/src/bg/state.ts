@@ -4,8 +4,14 @@ import { webextStorage } from '../common/storage-enginge'
 // @ts-ignore
 import { wrapStore } from 'webext-zustand'
 
-import type { User } from '@repo/db/index'
 import { getExampleService } from './example-service'
+
+export type UserT = {
+  id: string
+  email: string
+  name: string
+  image: string
+}
 
 export interface BreathingPatternConfig {
   duration: number
@@ -16,7 +22,7 @@ export interface BreathingPatternConfig {
 }
 
 interface ApplicationState {
-  user: User | undefined
+  user: UserT | undefined
   secretText: string | undefined
   loginStatus: 'idle' | 'loading' | 'success' | 'error'
   hasPlus: boolean
@@ -26,7 +32,7 @@ interface ApplicationState {
     lastShown: number | null // timestamp
   }
   customBreathingPatterns: Record<string, BreathingPatternConfig>
-  setUser: (user: User | undefined) => void
+  setUser: (user: UserT | undefined) => void
   setLoginStatus: (status: 'idle' | 'loading' | 'success' | 'error') => void
   togglePlus: () => void
   resetPlusFeatures: () => void

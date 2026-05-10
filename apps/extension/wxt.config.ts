@@ -20,16 +20,10 @@ export default defineConfig({
   chrome_url_overrides: {
     newtab: 'entrypoints/newtab/index.html',
   },
-  content: {
-    all: {
-      matches: ['<all_urls>'],
-      runAt: 'document_idle',
-    },
-  },
-  modules: ['@wxt-dev/module-react'],
+  modules: ['@wxt-dev/module-react', '@wxt-dev/analytics/module'],
   dev: {
     server: {
-      hostname: 'localhost',
+      host: 'localhost',
       port: 3050,
     },
   },

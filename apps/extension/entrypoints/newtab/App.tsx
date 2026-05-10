@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { analytics } from '#analytics'
 import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import {
   appIcons,
@@ -68,6 +69,8 @@ const App: React.FC = () => {
       () => checkSessionStatus(setIsSessionActive),
       2000,
     )
+    console.log('JAPAN')
+    void analytics.track('newtab_open')
 
     return () => {
       clearInterval(checkInterval)

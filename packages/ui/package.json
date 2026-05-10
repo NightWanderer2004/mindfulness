@@ -8,7 +8,6 @@
     "./*": "./src/*.tsx"
   },
   "devDependencies": {
-    "@repo/db": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/react": "catalog:react18",

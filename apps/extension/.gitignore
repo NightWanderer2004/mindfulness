@@ -13,6 +13,13 @@ stats.html
 .wxt
 web-ext.config.ts
 
+# Local ENV files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

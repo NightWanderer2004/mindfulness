@@ -1,6 +1,6 @@
 import { registerExampleService } from '../src/bg/example-service'
 import { applicationStoreReadyPromise, vanillaStore } from '../src/bg/state'
-import { sendAnalyticsEvent } from '../src/common/analytics'
+import { analytics } from '#analytics'
 
 // Simplified interface for messages
 interface ContentScriptMessage {
@@ -16,17 +16,17 @@ export default defineBackground(() => {
   registerExampleService()
 
   // Track service worker startup (cold start)
-  void sendAnalyticsEvent('bg_start')
+  void analytics.track('bg_start')
 
   // Track extension installation/update
   browser.runtime.onInstalled.addListener(details => {
     const reason = details.reason
     if (reason === 'install') {
-      void sendAnalyticsEvent('install', { reason })
+      void analytics.track('install', { reason })
     } else if (reason === 'update') {
-      void sendAnalyticsEvent('update', { reason })
+      void analytics.track('update', { reason })
     } else {
-      void sendAnalyticsEvent('onInstalled', { reason })
+      void analytics.track('onInstalled', { reason })
     }
   })
 
@@ -47,7 +47,7 @@ export default defineBackground(() => {
             .create({ url: typedMessage.url })
             .catch(err => console.error('Failed to open session page:', err))
 
-          void sendAnalyticsEvent('open_session', {
+          void analytics.track('open_session', {
             source: 'content_script',
           })
         }

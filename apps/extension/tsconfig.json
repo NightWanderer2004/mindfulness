@@ -16,6 +16,7 @@
     "./src/**/*",
     "./entrypoints/**/*",
     "./entrypoints/background.ts",
+    "./app.config.ts",
     "./types.d.ts",
     "./.wxt/**/*",
     "search-db.ts"

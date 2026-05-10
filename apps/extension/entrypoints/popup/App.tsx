@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { sendAnalyticsEvent } from '../../src/common/analytics'
+import { analytics } from '#analytics'
 import { AnimatedButton } from '@repo/ui/components/ui/animated-btn'
 import { MeditateButton } from '@repo/ui/components/ui/meditate-btn'
 import { TabModal } from '@repo/ui/components/ui/tab-modal'
@@ -62,7 +62,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     checkSessionStatus(setIsSessionActive)
-    void sendAnalyticsEvent('popup_open')
+    void analytics.track('popup_open')
   }, [])
 
   const getThemeIcon = () => {
@@ -77,30 +77,30 @@ const App: React.FC = () => {
   const handleThemeSelection = (theme: string) => {
     setSelectedTheme(theme)
     setStoredTheme(theme)
-    void sendAnalyticsEvent('theme_select', { theme })
+    void analytics.track('theme_select', { theme })
   }
 
   const handleSoundTypeSelection = (soundType: string) => {
     setSelectedSoundType(soundType)
     setStoredSoundType(soundType)
-    void sendAnalyticsEvent('sound_type_select', { soundType })
+    void analytics.track('sound_type_select', { soundType })
   }
 
   const handleBreathingPatternSelection = (pattern: string) => {
     setSelectedBreathingPattern(pattern)
     setStoredBreathingPattern(pattern)
-    void sendAnalyticsEvent('breathing_select', { pattern })
+    void analytics.track('breathing_select', { pattern })
   }
 
   const handleTimerSelection = (timer: number) => {
     setSelectedTimer(timer)
     setStoredTimer(timer)
-    void sendAnalyticsEvent('timer_select', { timer })
+    void analytics.track('timer_select', { timer })
   }
 
   const handleAddCustomPattern = (name: string, config: any) => {
     addCustomBreathingPattern(name, config)
-    void sendAnalyticsEvent('breathing_custom_add', { name })
+    void analytics.track('breathing_custom_add', { name })
   }
 
   const handleRemoveCustomPattern = (name: string) => {
@@ -109,7 +109,7 @@ const App: React.FC = () => {
     if (selectedBreathingPattern === name) {
       handleBreathingPatternSelection('Equal')
     }
-    void sendAnalyticsEvent('breathing_custom_remove', { name })
+    void analytics.track('breathing_custom_remove', { name })
   }
 
   const handlePlusToggle = () => {
@@ -119,7 +119,7 @@ const App: React.FC = () => {
       togglePlus()
     }
     setIsPlusModalOpen(false)
-    void sendAnalyticsEvent('plus_toggle', { enabled: !hasPlus })
+    void analytics.track('plus_toggle', { enabled: !hasPlus })
   }
 
   const handleShowPlusModal = () => {
@@ -138,7 +138,7 @@ const App: React.FC = () => {
         },
         () => setIsSessionActive(true),
       )
-      void sendAnalyticsEvent('start_session', { source: 'popup' })
+      void analytics.track('start_session', { source: 'popup' })
     }
   }
 
