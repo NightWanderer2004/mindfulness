@@ -6,7 +6,7 @@ interface WithAppProvidersProps {
   container: HTMLElement
 }
 
-export const UI_SELECTOR = 'mindful-tab-ui'
+export const UI_SELECTOR = 'mindfulness-ui'
 
 export function withAppProviders<P extends object>(
   WrappedComponent: React.ComponentType<P>,

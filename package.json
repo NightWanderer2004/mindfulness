@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/vercel/examples.git",
-  "name": "subsonic-wxt",
+  "name": "mindfulness",
   "private": true,
   "scripts": {
     "build": "turbo run build",

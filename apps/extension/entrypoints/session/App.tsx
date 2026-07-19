@@ -47,34 +47,26 @@ const imageMap: Record<
   harmony: {
     1: () => import('../../assets/wall/harmony-1.png'),
     2: () => import('../../assets/wall/harmony-2.png'),
-    3: () => import('../../assets/wall/harmony-3.png'),
   },
   wandering: {
     1: () => import('../../assets/wall/wandering-1.png'),
     2: () => import('../../assets/wall/wandering-2.png'),
-    3: () => import('../../assets/wall/wandering-3.png'),
-    4: () => import('../../assets/wall/wandering-4.png'),
   },
   openness: {
     1: () => import('../../assets/wall/openness-1.png'),
     2: () => import('../../assets/wall/openness-2.png'),
-    3: () => import('../../assets/wall/openness-3.png'),
   },
   confident: {
     1: () => import('../../assets/wall/confident-1.png'),
     2: () => import('../../assets/wall/confident-2.png'),
-    3: () => import('../../assets/wall/confident-3.png'),
   },
   softness: {
     1: () => import('../../assets/wall/softness-1.png'),
     2: () => import('../../assets/wall/softness-2.png'),
-    3: () => import('../../assets/wall/softness-3.png'),
-    4: () => import('../../assets/wall/softness-4.png'),
   },
   tiredness: {
     1: () => import('../../assets/wall/tiredness-1.png'),
     2: () => import('../../assets/wall/tiredness-2.png'),
-    3: () => import('../../assets/wall/tiredness-3.png'),
   },
 }
 
