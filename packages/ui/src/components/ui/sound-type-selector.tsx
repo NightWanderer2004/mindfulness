@@ -38,12 +38,12 @@ export const SoundTypeSelector: React.FC<SoundTypeSelectorProps> = ({
       hover: 'hover:border-blue-400/20 hover:bg-blue-100/20',
       text: 'text-blue-600/50',
     },
-    {
-      name: 'Mono',
-      color: 'border-orange-400/30 bg-orange-200/20',
-      hover: 'hover:border-orange-400/20 hover:bg-orange-100/20',
-      text: 'text-orange-600/50',
-    },
+    // {
+    //   name: 'Mono',
+    //   color: 'border-orange-400/30 bg-orange-200/20',
+    //   hover: 'hover:border-orange-400/20 hover:bg-orange-100/20',
+    //   text: 'text-orange-600/50',
+    // },
   ]
 
   const renderSoundButton = (soundType: any) => (

@@ -23,7 +23,7 @@ type ThemeType =
   | 'softness'
   | 'tiredness'
 
-type SoundType = 'ambient' | 'nature' | 'mono'
+type SoundType = 'ambient' | 'nature'
 
 const loadMusicTrack = (theme: ThemeType, trackNumber: number) => {
   return import(
@@ -36,7 +36,7 @@ const loadSingleTrack = (soundType: SoundType, theme: ThemeType) => {
 }
 
 // Get random track number between 1 and maxTracks
-const getRandomTrackNumber = (maxTracks = 4) => {
+const getRandomTrackNumber = (maxTracks = 2) => {
   return Math.floor(Math.random() * maxTracks) + 1
 }
 

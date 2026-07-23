@@ -2,8 +2,8 @@
 
 set -u  # только undefined переменные считаем ошибкой
 
-TARGET_DIR="$HOME/Projects/Ongoing/mindful-tab/apps/extension/assets/music"
-BITRATE="64k"  # можешь поменять на 80k или 96k
+TARGET_DIR="$HOME/Projects/Ongoing/mindful-tab/apps/extension/assets/mono"
+BITRATE="124k"  # можешь поменять на 80k или 96k
 
 echo "Compressing mp3 files in (recursively): $TARGET_DIR"
 

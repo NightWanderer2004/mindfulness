@@ -10,7 +10,7 @@ import softness from '../../assets/icons/softness.png'
 
 import ambient from '../../assets/icons/sounds/ambient.png'
 import nature from '../../assets/icons/sounds/nature.png'
-import mono from '../../assets/icons/sounds/mono.png'
+// import mono from '../../assets/icons/sounds/mono.png'
 
 import sunshine from '../../assets/icons/reminders/sunshine.png'
 import blossom from '../../assets/icons/reminders/blossom.png'
@@ -118,7 +118,7 @@ export const appIcons = {
   soundIcons: {
     ambient,
     nature,
-    mono,
+    // mono,
   },
 
   reminderIcons: {
