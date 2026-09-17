@@ -35,14 +35,13 @@ I kept the layout intentionally large and tactile: one primary action, two secon
 
 <img width="337" height="353" alt="popup" src="https://github.com/user-attachments/assets/56b95ebc-9bca-44bb-b846-47a41356ed2b" />
 
-<img width="337" height="353" alt="popup-themes" src="https://github.com/user-attachments/assets/1e1a36e3-0d39-4b7b-8adf-a98698b16820" />
-
-
 ### Theme Picker
 
 Theme selection appears in both the popup and the new tab, but the component stays the same. Each option combines a color, icon, label, and selected state, so the user can scan the available moods quickly.
 
 The modal uses soft contrast and large hit areas to keep the interaction calm.
+
+<img width="337" height="353" alt="popup-themes" src="https://github.com/user-attachments/assets/1e1a36e3-0d39-4b7b-8adf-a98698b16820" />
 
 ### Sound Picker
 
